@@ -66,18 +66,9 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(
-        color: AppColors.primaryTextColor,
-        fontSize: 16,
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.primaryTextColor,
-        fontSize: 14,
-      ),
-      bodySmall: TextStyle(
-        color: AppColors.primaryTextColor,
-        fontSize: 12,
-      ),
+      bodyLarge: TextStyle(color: AppColors.primaryTextColor, fontSize: 16),
+      bodyMedium: TextStyle(color: AppColors.primaryTextColor, fontSize: 14),
+      bodySmall: TextStyle(color: AppColors.primaryTextColor, fontSize: 12),
       labelLarge: TextStyle(
         color: AppColors.primaryTextColor,
         fontSize: 14,
@@ -111,9 +102,7 @@ class AppTheme {
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         textStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -126,9 +115,7 @@ class AppTheme {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primaryColor,
         side: BorderSide(color: AppColors.primaryColor),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         textStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -185,19 +172,15 @@ class AppTheme {
       backgroundColor: Colors.white,
       selectedItemColor: AppColors.primaryColor,
       unselectedItemColor: Colors.transparent,
-      selectedIconTheme: IconThemeData(
-      color: AppColors.primaryColor,
-      ),
-      unselectedIconTheme: IconThemeData(
-      color: Colors.transparent,
-      ),
+      selectedIconTheme: IconThemeData(color: AppColors.primaryColor),
+      unselectedIconTheme: IconThemeData(color: Colors.transparent),
       selectedLabelStyle: TextStyle(
-      fontFamily: 'PlusJakartaSans',
-      fontWeight: FontWeight.w600,
+        fontFamily: 'PlusJakartaSans',
+        fontWeight: FontWeight.w600,
       ),
       unselectedLabelStyle: TextStyle(
-      fontFamily: 'PlusJakartaSans',
-      fontWeight: FontWeight.normal,
+        fontFamily: 'PlusJakartaSans',
+        fontWeight: FontWeight.normal,
       ),
       type: BottomNavigationBarType.fixed,
       elevation: 8,
@@ -213,7 +196,7 @@ class AppTheme {
 extension AppThemeExtension on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   TextTheme get textTheme => Theme.of(this).textTheme;
-  
+
   Color get primaryColor => colorScheme.primary;
   Color get secondaryColor => colorScheme.secondary;
   Color get backgroundColor => colorScheme.surface;
@@ -224,10 +207,14 @@ extension AppThemeExtension on BuildContext {
 class GetXAppTheme {
   static ColorScheme get colorScheme => Get.theme.colorScheme;
   static TextTheme get textTheme => Get.theme.textTheme;
-  
+
   static Color get primaryColor => colorScheme.primary;
   static Color get secondaryColor => colorScheme.secondary;
   static Color get backgroundColor => colorScheme.surface;
   static Color get textColor => colorScheme.onSurface;
   static Color get errorColor => colorScheme.error;
+}
+
+extension CustomColors on ColorScheme {
+  Color get lightYellow => AppColors.lightYellowColor;
 }
