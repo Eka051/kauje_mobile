@@ -11,4 +11,5 @@ class AppColors {
   static const neutralColor = Color(0xFFACB5BB);
   static const lightGrayColor = Color(0xFFA4A4A4);
   static const strokeColor = Color(0xFFEDF1F3);
+  static const lightStrokeColor = Color(0xFFF5F6F9);
 }

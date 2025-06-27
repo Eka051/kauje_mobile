@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kauje_mobile/app/constants/app_const.dart';
 import '../controllers/splashscreen_controller.dart';
 import '../../../theme/app_theme.dart';
 
@@ -16,7 +17,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
               Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/bg-splashscreen.png'),
+                    image: AssetImage(AppImages.bgSplashscreen),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -26,7 +27,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                     child: Opacity(
                       opacity: controller.opacityAnimation.value,
                       child: Image.asset(
-                        'assets/images/welcome-logo.png',
+                        AppImages.welcomeLogo,
                         width: 300,
                         height: 300,
                       ),
@@ -62,7 +63,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                             padding: const EdgeInsets.only(bottom: 32),
                             child: Center(
                               child: Image.asset(
-                                'assets/images/kauje-logo.png',
+                                AppImages.kaujeLogo,
                                 width: double.infinity,
                                 height: 56,
                               ),
@@ -80,7 +81,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                         child: FadeTransition(
                           opacity: controller.welcomeLogoAgainAnimation,
                           child: Image.asset(
-                            'assets/images/welcome-logo.png',
+                            AppImages.welcomeLogo,
                             width: 300,
                             height: 300,
                           ),

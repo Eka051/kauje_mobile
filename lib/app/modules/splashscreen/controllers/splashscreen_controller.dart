@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kauje_mobile/app/modules/auth/views/auth_view.dart';
 
 class SplashscreenController extends GetxController
     with GetTickerProviderStateMixin {
@@ -21,7 +22,9 @@ class SplashscreenController extends GetxController
     await Future.delayed(const Duration(milliseconds: 300));
     showWelcomeLogoAgain.value = true;
     await Future.delayed(const Duration(milliseconds: 300));
-    welcomeLogoAgainAnimationController.forward();
+    await welcomeLogoAgainAnimationController.forward();
+    await Future.delayed(const Duration(milliseconds: 300));
+    Get.offAll(() => AuthView(), transition: Transition.noTransition);
   }
 
   @override
