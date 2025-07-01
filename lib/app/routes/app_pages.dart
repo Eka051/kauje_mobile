@@ -12,7 +12,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.SPLASHSCREEN;
+  static const initial = Routes.AUTH;
 
   static final routes = [
     GetPage(

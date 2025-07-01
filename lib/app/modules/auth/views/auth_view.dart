@@ -1,182 +1,308 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
+import 'package:kauje_mobile/app/theme/app_theme.dart';
+import 'package:kauje_mobile/app/widgets/app_filled_button.dart';
+import 'package:kauje_mobile/app/widgets/app_text_field.dart';
+import 'package:kauje_mobile/app/widgets/label_text.dart';
 import '../controllers/auth_controller.dart';
-import '../../../theme/app_theme.dart';
 
-class AuthView extends GetView<AuthController> {
+class AuthView extends StatefulWidget {
   const AuthView({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AppImages.bgSplashscreen),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: Image.asset(AppImages.welcomeLogo, width: 300, height: 300),
-          ),
-        ),
-        _AnimatedAuthBottomSheet(),
-      ],
-    );
-  }
+  State<AuthView> createState() => _AuthViewState();
 }
 
-class _AnimatedAuthBottomSheet extends StatefulWidget {
-  @override
-  State<_AnimatedAuthBottomSheet> createState() =>
-      _AnimatedAuthBottomSheetState();
-}
-
-class _AnimatedAuthBottomSheetState extends State<_AnimatedAuthBottomSheet>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _sheetAnimation;
-  TabController? _tabController;
+class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
+  final AuthController controller = Get.find<AuthController>();
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-    _sheetAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutQuart,
-    );
-    Future.delayed(const Duration(milliseconds: 300), () {
-      setState(() {
-        _tabController = TabController(length: 2, vsync: this);
-      });
-      _controller.forward();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _tabController?.dispose();
-    super.dispose();
+    controller.initAnimations(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.startFlow());
   }
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight = MediaQuery.of(context).size.height * 0.62;
-    return AnimatedBuilder(
-      animation: _sheetAnimation,
-      builder: (context, child) {
-        if (_tabController == null) return const SizedBox.shrink();
-        return Positioned(
-          left: 0,
-          right: 0,
-          bottom: -sheetHeight + (sheetHeight * _sheetAnimation.value),
-          child: Material(
-            color: Colors.transparent,
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AppImages.bgSplashscreen),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Obx(
+          () => Stack(
+            alignment: Alignment.center,
+            children: [
+              if (controller.flowState.value == AuthFlowState.splashing)
+                _buildSplashWidgets()
+              else
+                _buildAuthWidgets(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSplashWidgets() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        AnimatedBuilder(
+          animation: controller.logoAnimationController,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, controller.logoPositionAnimation.value),
+              child: Opacity(
+                opacity: controller.logoOpacityAnimation.value,
+                child: child,
+              ),
+            );
+          },
+          child: Image.asset(AppImages.welcomeLogo, width: 300, height: 300),
+        ),
+
+        AnimatedBuilder(
+          animation: controller.bottomContainerAnimationController,
+          builder: (context, child) {
+            final animationValue = controller.bottomContainerAnimation.value;
+            return Transform.translate(
+              offset: Offset(0, 115 * (1 - animationValue)),
+              child: Opacity(opacity: animationValue, child: child),
+            );
+          },
+          child: _BottomSplashContainer(),
+        ),
+
+        Obx(() {
+          return controller.showWelcomeLogoAgain.value
+              ? FadeTransition(
+                  opacity: controller.welcomeLogoAgainAnimation,
+                  child: Image.asset(
+                    AppImages.welcomeLogo,
+                    width: 300,
+                    height: 300,
+                  ),
+                )
+              : const SizedBox.shrink();
+        }),
+      ],
+    );
+  }
+
+  Widget _buildAuthWidgets() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: controller.authSheetAnimationController,
+            builder: (context, child) {
+              return Opacity(
+                opacity: controller.welcomeLogoAgainFadeOutAnimation.value,
+                child: Center(
+                  child: Image.asset(
+                    AppImages.welcomeLogo,
+                    width: 300,
+                    height: 300,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          AnimatedBuilder(
+            animation: controller.authSheetAnimationController,
+            builder: (context, child) {
+              final yOffset =
+                  MediaQuery.of(context).size.height *
+                  0.45 *
+                  (1 - controller.authSheetAnimation.value);
+
+              return Positioned(
+                left: 0,
+                right: 0,
+                bottom: -20,
+                child: Transform.translate(
+                  offset: Offset(0, yOffset),
+                  child: child!,
+                ),
+              );
+            },
+            child: _FullSheet(controller: controller),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FullSheet extends StatelessWidget {
+  final AuthController controller;
+
+  const _FullSheet({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final totalHeight = screenHeight * 0.9;
+
+    return SizedBox(
+      height: totalHeight,
+      width: double.infinity,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        alignment: Alignment.bottomCenter,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 580,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  context.colorScheme.accent,
+                  context.colorScheme.surface,
+                ],
+              ),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
+                Image.asset(
+                  AppImages.kaujeLogo,
+                  width: double.infinity,
+                  height: 56,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 380,
             child: Container(
               width: double.infinity,
-              height: sheetHeight,
               decoration: BoxDecoration(
                 color: context.colorScheme.surface,
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(32),
+                  top: Radius.circular(16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(20),
-                    blurRadius: 16,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24, bottom: 16),
-                    child: Image.asset(
-                      AppImages.kaujeLogo,
-                      width: 120,
-                      height: 56,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                        ),
-                        TabBar(
-                          controller: _tabController!,
-                          labelColor: context.textColor,
-                          unselectedLabelColor:
-                              context.colorScheme.onSurfaceVariant,
-                          indicator: BoxDecoration(
-                            color: context.primaryColor,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          tabs: [
-                            Tab(
-                              child: Text(
-                                'Masuk',
-                                style: AppThemeExtension(
-                                  context,
-                                ).textTheme.titleSmall,
-                              ),
-                            ),
-                            Tab(
-                              child: Text(
-                                'Daftar',
-                                style: AppThemeExtension(
-                                  context,
-                                ).textTheme.titleSmall,
-                              ),
-                            ),
-                          ],
-                          overlayColor: const WidgetStatePropertyAll(
-                            Colors.transparent,
-                          ),
-                          dividerColor: Colors.transparent,
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 24),
+                  _buildTabBar(context),
                   Expanded(
                     child: TabBarView(
-                      controller: _tabController!,
+                      controller: controller.tabController,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 8,
-                          ),
-                          child: _LoginForm(),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 8,
-                          ),
-                          child: _RegisterForm(),
-                        ),
+                        _LoginForm(controller: controller),
+                        _RegisterForm(controller: controller),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tabWidth = 310 / 2;
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          height: 52,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(
+              color: context.colorScheme.borderSecondary,
+              width: 1,
+            ),
+          ),
+          child: TabBar(
+            controller: controller.tabController,
+            labelColor: context.colorScheme.onSurface,
+            unselectedLabelColor: context.colorScheme.onSurfaceVariant,
+            indicator: BoxDecoration(
+              color: context.primaryColor,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: context.colorScheme.dividerColor.withAlpha(150),
+                width: 1,
+              ),
+            ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
+            tabAlignment: TabAlignment.center,
+            indicatorPadding: const EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 4,
+            ),
+            tabs: [
+              SizedBox(
+                width: tabWidth,
+                child: Tab(
+                  child: AnimatedBuilder(
+                    animation: controller.tabController,
+                    builder: (context, child) {
+                      final selected = controller.tabController.index == 0;
+                      return Text(
+                        'Masuk',
+                        textAlign: TextAlign.center,
+                        style: AppThemeExtension(context).textTheme.titleSmall!
+                            .copyWith(
+                              color: selected
+                                  ? context.colorScheme.onSurface
+                                  : context.colorScheme.textTertiary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: tabWidth,
+                child: Tab(
+                  child: AnimatedBuilder(
+                    animation: controller.tabController,
+                    builder: (context, child) {
+                      final selected = controller.tabController.index == 1;
+                      return Text(
+                        'Daftar',
+                        textAlign: TextAlign.center,
+                        style: AppThemeExtension(context).textTheme.titleSmall!
+                            .copyWith(
+                              color: selected
+                                  ? context.colorScheme.onSurface
+                                  : context.colorScheme.textTertiary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -185,62 +311,137 @@ class _AnimatedAuthBottomSheetState extends State<_AnimatedAuthBottomSheet>
 }
 
 class _LoginForm extends StatelessWidget {
+  final AuthController controller;
+  const _LoginForm({required this.controller});
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AuthController>();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Login', style: AppThemeExtension(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller.loginEmailController,
-          decoration: InputDecoration(labelText: 'Email'),
-        ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller.loginPasswordController,
-          decoration: InputDecoration(labelText: 'Password'),
-          obscureText: true,
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: controller.onLogin,
-          child: const Text('Login'),
-        ),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LabelText(
+            text: 'NIK/NIM',
+            fontSize: 14,
+            color: context.colorScheme.textSecondary,
+          ),
+          const SizedBox(height: 8),
+          AppTextField(
+            controller: controller.loginEmailController,
+            hintText: 'Masukkan NIK/NIM',
+            maxLength: 16,
+            obscureText: false,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 16),
+          LabelText(
+            text: 'Password',
+            fontSize: 14,
+            color: context.colorScheme.textSecondary,
+          ),
+          const SizedBox(height: 8),
+          AppTextField(
+            controller: controller.loginPasswordController,
+            hintText: 'Masukkan password',
+            obscureText: true,
+            passwordChar: '*',
+            keyboardType: TextInputType.visiblePassword,
+            showPasswordToggle: true,
+          ),
+          const SizedBox(height: 24),
+          AppFilledButton(
+            onPressed: controller.onLogin,
+            text: 'Masuk',
+            height: 56,
+            textSize: 16,
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _RegisterForm extends StatelessWidget {
+  final AuthController controller;
+  const _RegisterForm({required this.controller});
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AuthController>();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Register',
-          style: AppThemeExtension(context).textTheme.titleLarge,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LabelText(
+            text: 'NIK/NIM',
+            fontSize: 14,
+            color: context.colorScheme.textSecondary,
+          ),
+          const SizedBox(height: 8),
+          AppTextField(
+            controller: controller.registerEmailController,
+            hintText: 'Masukkan NIK/NIM',
+            maxLength: 16,
+            obscureText: false,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 16),
+          LabelText(
+            text: 'Password',
+            fontSize: 14,
+            color: context.colorScheme.textSecondary,
+          ),
+          const SizedBox(height: 8),
+          AppTextField(
+            controller: controller.registerPasswordController,
+            hintText: 'Masukkan password',
+            obscureText: true,
+            passwordChar: '*',
+            keyboardType: TextInputType.visiblePassword,
+            showPasswordToggle: true,
+          ),
+          const SizedBox(height: 24),
+          AppFilledButton(
+            onPressed: controller.onRegister,
+            text: 'Daftar',
+            height: 56,
+            textSize: 16,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomSplashContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: double.infinity,
+        height: 115,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [context.colorScheme.accent, context.colorScheme.surface],
+          ),
         ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller.registerEmailController,
-          decoration: InputDecoration(labelText: 'Email'),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 32),
+          child: Center(
+            child: Image.asset(
+              AppImages.kaujeLogo,
+              width: double.infinity,
+              height: 56,
+            ),
+          ),
         ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller.registerPasswordController,
-          decoration: InputDecoration(labelText: 'Password'),
-          obscureText: true,
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: controller.onRegister,
-          child: const Text('Register'),
-        ),
-      ],
+      ),
     );
   }
 }
