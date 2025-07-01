@@ -220,6 +220,7 @@ class GetXAppTheme {
 extension CustomColors on ColorScheme {
   Color get accent => AppColors.accent;
   Color get textSecondary => AppColors.textSecondary;
+  Color get textOnSecondary => AppColors.textOnSecondary;
   Color get textTertiary => AppColors.textTertiary;
   Color get neutral => AppColors.neutral;
   Color get borderPrimary => AppColors.borderPrimary;

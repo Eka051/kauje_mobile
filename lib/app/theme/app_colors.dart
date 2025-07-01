@@ -11,6 +11,7 @@ class AppColors {
   static const textPrimary = Color(0xFF000000);
   static const textSecondary = Color(0xFF6C7278);
   static const textTertiary = Color(0xFFA4A4A4);
+  static const textOnSecondary = Color(0xFFACB5BB);
   static const neutral = Color(0xFFACB5BB);
   
   static const borderPrimary = Color(0xFFEDF1F3);

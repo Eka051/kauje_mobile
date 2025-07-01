@@ -27,25 +27,28 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AppImages.bgSplashscreen),
-            fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(AppImages.bgSplashscreen),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Obx(
-          () => Stack(
-            alignment: Alignment.center,
-            children: [
-              if (controller.flowState.value == AuthFlowState.splashing)
-                _buildSplashWidgets()
-              else
-                _buildAuthWidgets(),
-            ],
+          child: Obx(
+            () => Stack(
+              alignment: Alignment.center,
+              children: [
+                if (controller.flowState.value == AuthFlowState.splashing)
+                  _buildSplashWidgets()
+                else
+                  _buildAuthWidgets(),
+              ],
+            ),
           ),
         ),
       ),
@@ -247,7 +250,7 @@ class _FullSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: context.colorScheme.dividerColor.withAlpha(150),
-                width: 1,
+                width: 2,
               ),
             ),
             indicatorSize: TabBarIndicatorSize.tab,
@@ -268,7 +271,7 @@ class _FullSheet extends StatelessWidget {
                       return Text(
                         'Masuk',
                         textAlign: TextAlign.center,
-                        style: AppThemeExtension(context).textTheme.titleSmall!
+                        style: AppThemeExtension(context).textTheme.bodyLarge!
                             .copyWith(
                               color: selected
                                   ? context.colorScheme.onSurface
@@ -290,7 +293,7 @@ class _FullSheet extends StatelessWidget {
                       return Text(
                         'Daftar',
                         textAlign: TextAlign.center,
-                        style: AppThemeExtension(context).textTheme.titleSmall!
+                        style: AppThemeExtension(context).textTheme.bodyLarge!
                             .copyWith(
                               color: selected
                                   ? context.colorScheme.onSurface
@@ -328,7 +331,7 @@ class _LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           AppTextField(
-            controller: controller.loginEmailController,
+            controller: controller.loginNimController,
             hintText: 'Masukkan NIK/NIM',
             maxLength: 16,
             obscureText: false,
@@ -342,20 +345,31 @@ class _LoginForm extends StatelessWidget {
             color: context.colorScheme.textSecondary,
           ),
           const SizedBox(height: 8),
-          AppTextField(
-            controller: controller.loginPasswordController,
-            hintText: 'Masukkan password',
-            obscureText: true,
-            passwordChar: '*',
-            keyboardType: TextInputType.visiblePassword,
-            showPasswordToggle: true,
+          Obx(
+            () => AppTextField(
+              controller: controller.loginPasswordController,
+              hintText: 'Masukkan password',
+              obscureText: controller.isPasswordLoginVisible.value,
+              passwordChar: '*',
+              keyboardType: TextInputType.visiblePassword,
+              showPasswordToggle: true,
+              onTogglePassword: () => controller.togglePasswordLogin(),
+            ),
           ),
           const SizedBox(height: 24),
-          AppFilledButton(
-            onPressed: controller.onLogin,
-            text: 'Masuk',
-            height: 56,
-            textSize: 16,
+          Obx(
+            () => AppFilledButton(
+              onPressed: controller.isLoginValid.value
+                  ? () => controller.login()
+                  : null,
+              text: 'Masuk',
+              height: 56,
+              textSize: 16,
+              disabledForegroundColor: context.colorScheme.textOnSecondary,
+              color: controller.isLoginValid.value
+                  ? context.colorScheme.primary
+                  : context.colorScheme.borderPrimary,
+            ),
           ),
         ],
       ),
@@ -381,7 +395,7 @@ class _RegisterForm extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           AppTextField(
-            controller: controller.registerEmailController,
+            controller: controller.registerNimController,
             hintText: 'Masukkan NIK/NIM',
             maxLength: 16,
             obscureText: false,
@@ -395,20 +409,31 @@ class _RegisterForm extends StatelessWidget {
             color: context.colorScheme.textSecondary,
           ),
           const SizedBox(height: 8),
-          AppTextField(
-            controller: controller.registerPasswordController,
-            hintText: 'Masukkan password',
-            obscureText: true,
-            passwordChar: '*',
-            keyboardType: TextInputType.visiblePassword,
-            showPasswordToggle: true,
+          Obx(
+            () => AppTextField(
+              controller: controller.registerPasswordController,
+              hintText: 'Masukkan password',
+              obscureText: controller.isPasswordRegisterVisible.value,
+              passwordChar: '*',
+              keyboardType: TextInputType.visiblePassword,
+              showPasswordToggle: true,
+              onTogglePassword: () => controller.togglePasswordRegister(),
+            ),
           ),
           const SizedBox(height: 24),
-          AppFilledButton(
-            onPressed: controller.onRegister,
-            text: 'Daftar',
-            height: 56,
-            textSize: 16,
+          Obx(
+            () => AppFilledButton(
+              onPressed: controller.isRegisterValid.value
+                  ? controller.register
+                  : null,
+              text: 'Daftar',
+              height: 56,
+              textSize: 16,
+              disabledForegroundColor: context.colorScheme.textOnSecondary,
+              color: controller.isRegisterValid.value
+                  ? context.colorScheme.primary
+                  : context.colorScheme.borderPrimary,
+            ),
           ),
         ],
       ),
