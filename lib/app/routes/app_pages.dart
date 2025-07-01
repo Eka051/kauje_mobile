@@ -1,20 +1,16 @@
 import 'package:get/get.dart';
 
+import '../modules/auth/bindings/auth_binding.dart';
+import '../modules/auth/views/auth_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
-import '../modules/register/bindings/register_binding.dart';
-import '../modules/register/views/register_view.dart';
-import '../modules/splashscreen/bindings/splashscreen_binding.dart';
-import '../modules/splashscreen/views/splashscreen_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.SPLASHSCREEN;
+  static const initial = Routes.AUTH;
 
   static final routes = [
     GetPage(
@@ -23,19 +19,9 @@ class AppPages {
       binding: HomeBinding(),
     ),
     GetPage(
-      name: _Paths.SPLASHSCREEN,
-      page: () => const SplashscreenView(),
-      binding: SplashscreenBinding(),
-    ),
-    GetPage(
-      name: _Paths.REGISTER,
-      page: () => const RegisterView(),
-      binding: RegisterBinding(),
-    ),
-    GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
+      name: _Paths.AUTH,
+      page: () => const AuthView(),
+      binding: AuthBinding(),
     ),
   ];
 }

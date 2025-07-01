@@ -7,86 +7,88 @@ class AppTheme {
     brightness: Brightness.light,
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primaryColor,
+      seedColor: AppColors.primary,
       brightness: Brightness.light,
-      primary: AppColors.primaryColor,
-      secondary: AppColors.secondaryColor,
-      surface: AppColors.backgroundColor,
-      error: AppColors.redColor,
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      surface: AppColors.surface,
+      surfaceContainerHighest: AppColors.surfaceVariant,
+      error: AppColors.error,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onSurface: AppColors.primaryTextColor,
+      onSurface: AppColors.textPrimary,
       onError: Colors.white,
+      onSecondaryFixedVariant: AppColors.borderPrimary,
     ),
-    scaffoldBackgroundColor: AppColors.backgroundColor,
+    scaffoldBackgroundColor: AppColors.surface,
     fontFamily: 'PlusJakartaSans',
     textTheme: TextTheme(
       displayLarge: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 32,
         fontWeight: FontWeight.bold,
       ),
       displayMedium: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 28,
         fontWeight: FontWeight.bold,
       ),
       displaySmall: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 24,
         fontWeight: FontWeight.w600,
       ),
       headlineLarge: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 22,
         fontWeight: FontWeight.w600,
       ),
       headlineMedium: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
       headlineSmall: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 18,
         fontWeight: FontWeight.w500,
       ),
       titleLarge: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 28,
         fontWeight: FontWeight.bold,
       ),
       titleMedium: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 24,
         fontWeight: FontWeight.w600,
       ),
       titleSmall: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(color: AppColors.primaryTextColor, fontSize: 16),
-      bodyMedium: TextStyle(color: AppColors.primaryTextColor, fontSize: 14),
-      bodySmall: TextStyle(color: AppColors.primaryTextColor, fontSize: 12),
+      bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16),
+      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14),
+      bodySmall: TextStyle(color: AppColors.textPrimary, fontSize: 12),
       labelLarge: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 14,
         fontWeight: FontWeight.w500,
       ),
       labelMedium: TextStyle(
-        color: AppColors.primaryTextColor,
+        color: AppColors.textPrimary,
         fontSize: 12,
         fontWeight: FontWeight.w500,
       ),
       labelSmall: TextStyle(
-        color: AppColors.primaryTextColor,
-        fontSize: 8,
+        color: AppColors.textPrimary,
+        fontSize: 10,
         fontWeight: FontWeight.w500,
       ),
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: AppColors.primaryColor,
+      backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
@@ -99,7 +101,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -113,8 +115,8 @@ class AppTheme {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        side: BorderSide(color: AppColors.primaryColor),
+        foregroundColor: AppColors.primary,
+        side: BorderSide(color: AppColors.primary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         textStyle: TextStyle(
           fontSize: 16,
@@ -126,7 +128,7 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
+        foregroundColor: AppColors.primary,
         textStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -146,33 +148,33 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+        borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.redColor),
+        borderSide: BorderSide(color: AppColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.redColor, width: 2),
+        borderSide: BorderSide(color: AppColors.error, width: 2),
       ),
       filled: true,
-      fillColor: AppColors.backgroundColor,
+      fillColor: AppColors.surface,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       labelStyle: TextStyle(
-        color: AppColors.darkGrayColor,
+        color: AppColors.textSecondary,
         fontFamily: 'PlusJakartaSans',
       ),
       hintStyle: TextStyle(
-        color: AppColors.lightGrayColor,
+        color: AppColors.textTertiary,
         fontFamily: 'PlusJakartaSans',
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
-      selectedItemColor: AppColors.primaryColor,
+      selectedItemColor: AppColors.primary,
       unselectedItemColor: Colors.transparent,
-      selectedIconTheme: IconThemeData(color: AppColors.primaryColor),
+      selectedIconTheme: IconThemeData(color: AppColors.primary),
       unselectedIconTheme: IconThemeData(color: Colors.transparent),
       selectedLabelStyle: TextStyle(
         fontFamily: 'PlusJakartaSans',
@@ -216,5 +218,12 @@ class GetXAppTheme {
 }
 
 extension CustomColors on ColorScheme {
-  Color get lightYellow => AppColors.lightYellowColor;
+  Color get accent => AppColors.accent;
+  Color get textSecondary => AppColors.textSecondary;
+  Color get textOnSecondary => AppColors.textOnSecondary;
+  Color get textTertiary => AppColors.textTertiary;
+  Color get neutral => AppColors.neutral;
+  Color get borderPrimary => AppColors.borderPrimary;
+  Color get borderSecondary => AppColors.borderSecondary;
+  Color get dividerColor => AppColors.divider;
 }
