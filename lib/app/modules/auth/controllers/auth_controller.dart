@@ -106,12 +106,12 @@ class AuthController extends GetxController {
     isPasswordRegisterVisible.value = !isPasswordRegisterVisible.value;
   }
 
-  String? validateNim(String? value) {
+  String? validateNimNIK(String? value) {
     if (value == null || value.isEmpty) {
-      return "NIM tidak boleh kosong";
+      return "NIM/NIK tidak boleh kosong";
     }
-    if (value.length != 12) {
-      return "NIM harus 12 digit";
+    if (value.length < 12) {
+      return "NIM/NIK minimal 12 digit";
     }
     return null;
   }
@@ -127,7 +127,7 @@ class AuthController extends GetxController {
   }
 
   bool loginValid() {
-    final nimError = validateNim(loginNimController.text);
+    final nimError = validateNimNIK(loginNimController.text);
     final passwordError = validatePassword(loginPasswordController.text);
 
     isLoginValid.value = (nimError == null && passwordError == null);
@@ -135,7 +135,7 @@ class AuthController extends GetxController {
   }
 
   bool registerValid() {
-    final nimError = validateNim(registerNimController.text);
+    final nimError = validateNimNIK(registerNimController.text);
     final passwordError = validatePassword(registerPasswordController.text);
 
     isRegisterValid.value = (nimError == null && passwordError == null);
@@ -145,7 +145,7 @@ class AuthController extends GetxController {
   Future<void> login() async {
     final nim = loginNimController.text;
     final password = loginPasswordController.text;
-    final nimError = validateNim(nim);
+    final nimError = validateNimNIK(nim);
 
     if (nimError != null) {
       Get.dialog(
@@ -181,7 +181,7 @@ class AuthController extends GetxController {
     final nim = registerNimController.text;
     final password = registerPasswordController.text;
 
-    final nimError = validateNim(nim);
+    final nimError = validateNimNIK(nim);
     final passwordError = validatePassword(password);
 
     if (nimError != null) {
@@ -228,24 +228,20 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Pasang listener untuk validasi real-time
     loginNimController.addListener(_validateLoginForm);
     loginPasswordController.addListener(_validateLoginForm);
     registerNimController.addListener(_validateRegisterForm);
     registerPasswordController.addListener(_validateRegisterForm);
 
-    // Lakukan validasi awal
     _validateLoginForm();
     _validateRegisterForm();
   }
 
   void _validateLoginForm() {
-    // Cukup panggil loginValid() yang akan mengupdate isLoginValid.value
     loginValid();
   }
 
   void _validateRegisterForm() {
-    // Cukup panggil registerValid() yang akan mengupdate isRegisterValid.value
     registerValid();
   }
 
