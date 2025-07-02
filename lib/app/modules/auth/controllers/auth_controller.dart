@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthFlowState { splashing, auth }
 
@@ -27,10 +28,14 @@ class AuthController extends GetxController {
   final registerNimController = TextEditingController();
   final registerPasswordController = TextEditingController();
 
+  static const String _isLoggedInKey = 'isLoggedIn';
+  static const String _userNimKey = 'userNim';
+
   final isPasswordLoginVisible = true.obs;
   final isPasswordRegisterVisible = true.obs;
   final isLoginValid = false.obs;
   final isRegisterValid = false.obs;
+  final isLoggedIn = false.obs;
 
   void initAnimations(TickerProvider vsync) {
     tabController = TabController(length: 2, vsync: vsync);
@@ -142,6 +147,62 @@ class AuthController extends GetxController {
     return isRegisterValid.value;
   }
 
+  Future<void> _loadLoginStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      this.isLoggedIn.value = isLoggedIn;
+    } catch (e) {
+      print('Error loading login status: $e');
+      isLoggedIn.value = false;
+    }
+  }
+
+  Future<void> _saveLoginStatus(bool status, {String? nimNik}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_isLoggedInKey, status);
+      isLoggedIn.value = status;
+
+      if (nimNik != null) {
+        await prefs.setString(_userNimKey, nimNik);
+      }
+    } catch (e) {
+      print('Error saving login status: $e');
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _saveLoginStatus(false);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_userNimKey);
+      Get.offAllNamed('/auth');
+    } catch (e) {
+      print('Error during logout: $e');
+    }
+  }
+
+  Future<String?> getUserNim() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_userNimKey);
+    } catch (e) {
+      print('Error getting user nim: $e');
+      return null;
+    }
+  }
+
+  Future<bool> checkLoginStatus() async {
+    try {
+      await _loadLoginStatus();
+      return isLoggedIn.value;
+    } catch (e) {
+      print('Error checking login status: $e');
+      return false;
+    }
+  }
+
   Future<void> login() async {
     final nim = loginNimController.text;
     final password = loginPasswordController.text;
@@ -159,11 +220,17 @@ class AuthController extends GetxController {
     }
 
     if (nim == "202010102020" && password == "password") {
+      await _saveLoginStatus(true, nimNik: nim);
       Get.dialog(
         AlertDialog(
           title: Text("Login Berhasil"),
           content: Text("Selamat datang kembali!"),
-          actions: [TextButton(onPressed: () => Get.back(), child: Text("OK"))],
+          actions: [
+            TextButton(
+              onPressed: () => Get.offAllNamed('/home'),
+              child: Text("OK"),
+            ),
+          ],
         ),
       );
     } else {
@@ -235,6 +302,10 @@ class AuthController extends GetxController {
 
     _validateLoginForm();
     _validateRegisterForm();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadLoginStatus();
+    });
   }
 
   void _validateLoginForm() {
