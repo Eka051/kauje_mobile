@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthFlowState { splashing, auth }
 
@@ -21,27 +25,68 @@ class AuthController extends GetxController {
   late AnimationController authSheetAnimationController;
   late Animation<double> authSheetAnimation;
 
+  late AnimationController sheetHeightAnimationController;
+  late Animation<double> sheetHeightAnimation;
+
   late TabController tabController;
+  late PageController registerPageController;
+  final currentRegisterPage = 0.obs;
+
   final loginNimController = TextEditingController();
   final loginPasswordController = TextEditingController();
+  final fullnameController = TextEditingController();
   final registerNimController = TextEditingController();
+  final emailController = TextEditingController();
   final registerPasswordController = TextEditingController();
+  final registerConfirmPasswordController = TextEditingController();
+  final facultyController = TextEditingController();
+  final studyProgramController = TextEditingController();
+  final graduationYearController = TextEditingController();
+  File? transkripIjazahFile;
+  final transkripIjazahFileName = ''.obs;
+
+  static const String _isLoggedInKey = 'isLoggedIn';
+  static const String _userNimKey = 'userNim';
+  static const String _lastRegisterPageKey = 'lastRegisterPage';
 
   final isPasswordLoginVisible = true.obs;
   final isPasswordRegisterVisible = true.obs;
+  final isConfirmPasswordRegisterVisible = true.obs;
   final isLoginValid = false.obs;
   final isRegisterValid = false.obs;
+  final isLoggedIn = false.obs;
 
   void initAnimations(TickerProvider vsync) {
     tabController = TabController(length: 2, vsync: vsync);
+    registerPageController = PageController();
+
+    tabController.addListener(() {
+      if (tabController.index == 1) {
+        sheetHeightAnimationController.forward();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (registerPageController.hasClients) {
+            registerPageController.animateToPage(
+              currentRegisterPage.value,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      } else {
+        sheetHeightAnimationController.reverse();
+        _saveLastRegisterPage(currentRegisterPage.value);
+      }
+      registerValid();
+    });
+
     logoAnimationController = AnimationController(
       vsync: vsync,
       duration: const Duration(milliseconds: 300),
     );
-    logoPositionAnimation = Tween<double>(begin: 0, end: 500).animate(
+    logoPositionAnimation = Tween<double>(begin: 0, end: 700).animate(
       CurvedAnimation(
         parent: logoAnimationController,
-        curve: Curves.easeInOutBack,
+        curve: Curves.easeInOutQuad,
       ),
     );
     logoOpacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
@@ -54,12 +99,12 @@ class AuthController extends GetxController {
     bottomContainerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: bottomContainerAnimationController,
-        curve: Curves.easeInOutQuart,
+        curve: Curves.easeInOutQuad,
       ),
     );
     welcomeLogoAgainAnimationController = AnimationController(
       vsync: vsync,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 800),
     );
     welcomeLogoAgainAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -69,7 +114,7 @@ class AuthController extends GetxController {
     );
     authSheetAnimationController = AnimationController(
       vsync: vsync,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1800),
     );
     authSheetAnimation = Tween<double>(begin: 0.0, end: 0.95).animate(
       CurvedAnimation(
@@ -77,6 +122,18 @@ class AuthController extends GetxController {
         curve: Curves.easeInOutBack,
       ),
     );
+
+    sheetHeightAnimationController = AnimationController(
+      vsync: vsync,
+      duration: const Duration(milliseconds: 300),
+    );
+    sheetHeightAnimation = Tween<double>(begin: 280.0, end: 140.0).animate(
+      CurvedAnimation(
+        parent: sheetHeightAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     welcomeLogoAgainFadeOutAnimation = Tween<double>(begin: 1.0, end: 0.0)
         .animate(
           CurvedAnimation(
@@ -106,12 +163,17 @@ class AuthController extends GetxController {
     isPasswordRegisterVisible.value = !isPasswordRegisterVisible.value;
   }
 
-  String? validateNim(String? value) {
+  void toggleConfirmPasswordRegister() {
+    isConfirmPasswordRegisterVisible.value =
+        !isConfirmPasswordRegisterVisible.value;
+  }
+
+  String? validateNimNIK(String? value) {
     if (value == null || value.isEmpty) {
-      return "NIM tidak boleh kosong";
+      return "NIM/NIK tidak boleh kosong";
     }
-    if (value.length != 12) {
-      return "NIM harus 12 digit";
+    if (value.length < 12) {
+      return "NIM/NIK minimal 12 digit";
     }
     return null;
   }
@@ -127,7 +189,7 @@ class AuthController extends GetxController {
   }
 
   bool loginValid() {
-    final nimError = validateNim(loginNimController.text);
+    final nimError = validateNimNIK(loginNimController.text);
     final passwordError = validatePassword(loginPasswordController.text);
 
     isLoginValid.value = (nimError == null && passwordError == null);
@@ -135,17 +197,87 @@ class AuthController extends GetxController {
   }
 
   bool registerValid() {
-    final nimError = validateNim(registerNimController.text);
-    final passwordError = validatePassword(registerPasswordController.text);
+    if (currentRegisterPage.value == 0) {
+      final fullnameValid = fullnameController.text.trim().isNotEmpty;
+      final nimError = validateNimNIK(registerNimController.text);
+      final emailValid =
+          emailController.text.trim().isNotEmpty &&
+          emailController.text.contains('@');
 
-    isRegisterValid.value = (nimError == null && passwordError == null);
+      isRegisterValid.value = (fullnameValid && nimError == null && emailValid);
+    } else {
+      final passwordError = validatePassword(registerPasswordController.text);
+      final confirmPasswordValid =
+          registerPasswordController.text ==
+          registerConfirmPasswordController.text;
+      final facultyValid = facultyController.text.trim().isNotEmpty;
+      final studyProgramValid = studyProgramController.text.trim().isNotEmpty;
+      final graduationYearValid = graduationYearController.text
+          .trim()
+          .isNotEmpty;
+      final transkripValid = transkripIjazahFileName.value.isNotEmpty;
+
+      isRegisterValid.value =
+          (passwordError == null &&
+          confirmPasswordValid &&
+          facultyValid &&
+          studyProgramValid &&
+          graduationYearValid &&
+          transkripValid);
+    }
     return isRegisterValid.value;
+  }
+
+  Future<void> _loadLoginStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      this.isLoggedIn.value = isLoggedIn;
+
+      final lastRegisterPage = prefs.getInt(_lastRegisterPageKey) ?? 0;
+      currentRegisterPage.value = lastRegisterPage;
+    } catch (e) {
+      isLoggedIn.value = false;
+      currentRegisterPage.value = 0;
+    }
+  }
+
+  Future<void> _saveLastRegisterPage(int pageIndex) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastRegisterPageKey, pageIndex);
+  }
+
+  Future<void> _saveLoginStatus(bool status, {String? nimNik}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isLoggedInKey, status);
+    isLoggedIn.value = status;
+
+    if (nimNik != null) {
+      await prefs.setString(_userNimKey, nimNik);
+    }
+  }
+
+  Future<void> logout() async {
+    await _saveLoginStatus(false);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userNimKey);
+    Get.offAllNamed('/auth');
+  }
+
+  Future<String?> getUserNim() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userNimKey);
+  }
+
+  Future<bool> checkLoginStatus() async {
+    await _loadLoginStatus();
+    return isLoggedIn.value;
   }
 
   Future<void> login() async {
     final nim = loginNimController.text;
     final password = loginPasswordController.text;
-    final nimError = validateNim(nim);
+    final nimError = validateNimNIK(nim);
 
     if (nimError != null) {
       Get.dialog(
@@ -159,11 +291,17 @@ class AuthController extends GetxController {
     }
 
     if (nim == "202010102020" && password == "password") {
+      await _saveLoginStatus(true, nimNik: nim);
       Get.dialog(
         AlertDialog(
           title: Text("Login Berhasil"),
           content: Text("Selamat datang kembali!"),
-          actions: [TextButton(onPressed: () => Get.back(), child: Text("OK"))],
+          actions: [
+            TextButton(
+              onPressed: () => Get.offAllNamed('/home'),
+              child: Text("OK"),
+            ),
+          ],
         ),
       );
     } else {
@@ -177,11 +315,75 @@ class AuthController extends GetxController {
     }
   }
 
+  void nextRegisterPage() {
+    if (currentRegisterPage.value == 0 && isRegisterValid.value) {
+      currentRegisterPage.value = 1;
+      _saveLastRegisterPage(1);
+      registerPageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      _validateRegisterForm();
+    }
+  }
+
+  void previousRegisterPage() {
+    if (currentRegisterPage.value == 1) {
+      currentRegisterPage.value = 0;
+      _saveLastRegisterPage(0);
+      registerPageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      _validateRegisterForm();
+    }
+  }
+
+  Future<void> pickTranskripIjazahFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'png'],
+        withData: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        transkripIjazahFile = File(file.path!);
+        transkripIjazahFileName.value = file.name;
+        _validateRegisterForm();
+      } else {
+        Get.snackbar(
+          'Info',
+          'Tidak ada file yang dipilih',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memilih file: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void clearTranskripIjazahFile() {
+    transkripIjazahFile = null;
+    transkripIjazahFileName.value = '';
+    _validateRegisterForm();
+  }
+
   Future<void> register() async {
+    if (currentRegisterPage.value == 0) {
+      nextRegisterPage();
+      return;
+    }
+
     final nim = registerNimController.text;
     final password = registerPasswordController.text;
 
-    final nimError = validateNim(nim);
+    final nimError = validateNimNIK(nim);
     final passwordError = validatePassword(password);
 
     if (nimError != null) {
@@ -228,24 +430,31 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Pasang listener untuk validasi real-time
     loginNimController.addListener(_validateLoginForm);
     loginPasswordController.addListener(_validateLoginForm);
     registerNimController.addListener(_validateRegisterForm);
     registerPasswordController.addListener(_validateRegisterForm);
+    fullnameController.addListener(_validateRegisterForm);
+    emailController.addListener(_validateRegisterForm);
+    registerConfirmPasswordController.addListener(_validateRegisterForm);
+    facultyController.addListener(_validateRegisterForm);
+    studyProgramController.addListener(_validateRegisterForm);
+    graduationYearController.addListener(_validateRegisterForm);
+    transkripIjazahFileName.listen((_) => _validateRegisterForm());
 
-    // Lakukan validasi awal
     _validateLoginForm();
     _validateRegisterForm();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadLoginStatus();
+    });
   }
 
   void _validateLoginForm() {
-    // Cukup panggil loginValid() yang akan mengupdate isLoginValid.value
     loginValid();
   }
 
   void _validateRegisterForm() {
-    // Cukup panggil registerValid() yang akan mengupdate isRegisterValid.value
     registerValid();
   }
 
@@ -255,16 +464,30 @@ class AuthController extends GetxController {
     loginPasswordController.removeListener(_validateLoginForm);
     registerNimController.removeListener(_validateRegisterForm);
     registerPasswordController.removeListener(_validateRegisterForm);
+    fullnameController.removeListener(_validateRegisterForm);
+    emailController.removeListener(_validateRegisterForm);
+    registerConfirmPasswordController.removeListener(_validateRegisterForm);
+    facultyController.removeListener(_validateRegisterForm);
+    studyProgramController.removeListener(_validateRegisterForm);
+    graduationYearController.removeListener(_validateRegisterForm);
 
     logoAnimationController.dispose();
     bottomContainerAnimationController.dispose();
     welcomeLogoAgainAnimationController.dispose();
     authSheetAnimationController.dispose();
+    sheetHeightAnimationController.dispose();
     tabController.dispose();
+    registerPageController.dispose();
     loginNimController.dispose();
     loginPasswordController.dispose();
     registerNimController.dispose();
     registerPasswordController.dispose();
+    fullnameController.dispose();
+    emailController.dispose();
+    registerConfirmPasswordController.dispose();
+    facultyController.dispose();
+    studyProgramController.dispose();
+    graduationYearController.dispose();
     super.onClose();
   }
 }
