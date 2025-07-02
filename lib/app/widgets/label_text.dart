@@ -20,8 +20,8 @@ class LabelText extends StatelessWidget {
       text,
       style: TextStyle(
         fontSize: fontSize.toDouble(),
-        color: color ?? context.textTheme.bodyMedium?.color,
-        fontWeight: fontWeight ?? FontWeight.normal,
+        color: color ?? context.colorScheme.textSecondary,
+        fontWeight: fontWeight ?? FontWeight.w500,
       ),
     );
   }

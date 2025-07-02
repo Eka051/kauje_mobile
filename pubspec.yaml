@@ -37,6 +37,7 @@ dependencies:
   get_cli: ^1.9.1
   get: ^4.7.2
   shared_preferences: ^2.5.3
+  file_picker: ^10.2.0
 
 dev_dependencies:
   flutter_test:

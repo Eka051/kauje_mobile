@@ -36,8 +36,9 @@ class AppTextField extends StatelessWidget {
   }
 
   Widget _buildTextField(BuildContext context, bool isObscured) {
+    final double verticalPadding = height != null ? (height! - 40) / 2 : 12;
+
     return SizedBox(
-      height: height,
       width: width,
       child: TextField(
         maxLength: maxLength,
@@ -49,6 +50,11 @@ class AppTextField extends StatelessWidget {
         inputFormatters: inputFormatters,
         decoration: InputDecoration(
           hintText: hintText,
+          hintStyle: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.tertiary.withAlpha(125),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: context.colorScheme.borderPrimary),
@@ -62,7 +68,10 @@ class AppTextField extends StatelessWidget {
                   onPressed: onTogglePassword,
                 )
               : null,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: verticalPadding > 0 ? verticalPadding : 12,
+          ),
           counterText: '',
         ),
       ),
