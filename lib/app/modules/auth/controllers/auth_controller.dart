@@ -153,54 +153,35 @@ class AuthController extends GetxController {
       final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
       this.isLoggedIn.value = isLoggedIn;
     } catch (e) {
-      print('Error loading login status: $e');
       isLoggedIn.value = false;
     }
   }
 
   Future<void> _saveLoginStatus(bool status, {String? nimNik}) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_isLoggedInKey, status);
-      isLoggedIn.value = status;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isLoggedInKey, status);
+    isLoggedIn.value = status;
 
-      if (nimNik != null) {
-        await prefs.setString(_userNimKey, nimNik);
-      }
-    } catch (e) {
-      print('Error saving login status: $e');
+    if (nimNik != null) {
+      await prefs.setString(_userNimKey, nimNik);
     }
   }
 
   Future<void> logout() async {
-    try {
-      await _saveLoginStatus(false);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_userNimKey);
-      Get.offAllNamed('/auth');
-    } catch (e) {
-      print('Error during logout: $e');
-    }
+    await _saveLoginStatus(false);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userNimKey);
+    Get.offAllNamed('/auth');
   }
 
   Future<String?> getUserNim() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(_userNimKey);
-    } catch (e) {
-      print('Error getting user nim: $e');
-      return null;
-    }
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userNimKey);
   }
 
   Future<bool> checkLoginStatus() async {
-    try {
-      await _loadLoginStatus();
-      return isLoggedIn.value;
-    } catch (e) {
-      print('Error checking login status: $e');
-      return false;
-    }
+    await _loadLoginStatus();
+    return isLoggedIn.value;
   }
 
   Future<void> login() async {
