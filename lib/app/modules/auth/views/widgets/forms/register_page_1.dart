@@ -57,7 +57,9 @@ class RegisterPage1 extends StatelessWidget {
               passwordChar: '*',
               keyboardType: TextInputType.visiblePassword,
               showPasswordToggle: true,
-              onTogglePassword: () => controller.togglePasswordRegister(),
+              onTogglePassword: () => controller.togglePasswordVisibility(
+                controller.isPasswordRegisterVisible,
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -71,8 +73,9 @@ class RegisterPage1 extends StatelessWidget {
               passwordChar: '*',
               keyboardType: TextInputType.visiblePassword,
               showPasswordToggle: true,
-              onTogglePassword: () =>
-                  controller.toggleConfirmPasswordRegister(),
+              onTogglePassword: () => controller.togglePasswordVisibility(
+                controller.isConfirmPasswordRegisterVisible,
+              ),
             ),
           ),
         ],

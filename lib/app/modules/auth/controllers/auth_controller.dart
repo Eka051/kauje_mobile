@@ -10,6 +10,8 @@ enum AuthFlowState { splashing, auth }
 class AuthController extends GetxController {
   final flowState = AuthFlowState.splashing.obs;
   final showWelcomeLogoAgain = false.obs;
+  final loginFormKey = GlobalKey<FormState>();
+  final registerFormKey = GlobalKey<FormState>();
 
   late AnimationController logoAnimationController;
   late Animation<double> logoPositionAnimation;
@@ -76,7 +78,7 @@ class AuthController extends GetxController {
         sheetHeightAnimationController.reverse();
         _saveLastRegisterPage(currentRegisterPage.value);
       }
-      registerValid();
+      validateRegisterForm();
     });
 
     logoAnimationController = AnimationController(
@@ -155,17 +157,59 @@ class AuthController extends GetxController {
     authSheetAnimationController.forward();
   }
 
-  void togglePasswordLogin() {
-    isPasswordLoginVisible.value = !isPasswordLoginVisible.value;
+  void setupValidators() {
+    final loginControllers = [loginNimController, loginPasswordController];
+    final registerControllers = [
+      fullnameController,
+      registerNimController,
+      emailController,
+      registerPasswordController,
+      registerConfirmPasswordController,
+      facultyController,
+      studyProgramController,
+      graduationYearController,
+    ];
+
+    for (var controller in loginControllers) {
+      controller.addListener(() {
+        validateLoginForm();
+      });
+    }
+    for (var controller in registerControllers) {
+      controller.addListener(() {
+        validateRegisterForm();
+      });
+    }
+
+    transkripIjazahFileName.listen((_) {
+      validateRegisterForm();
+    });
+
+    return;
   }
 
-  void togglePasswordRegister() {
-    isPasswordRegisterVisible.value = !isPasswordRegisterVisible.value;
+  void togglePasswordVisibility(RxBool visibility) {
+    visibility.value = !visibility.value;
   }
 
-  void toggleConfirmPasswordRegister() {
-    isConfirmPasswordRegisterVisible.value =
-        !isConfirmPasswordRegisterVisible.value;
+  String? validateFullname(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Nama lengkap tidak boleh kosong";
+    }
+    if (value.length < 3) {
+      return "Nama lengkap minimal 3 karakter";
+    }
+    return null;
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Email tidak boleh kosong";
+    }
+    if (!value.contains('@')) {
+      return "Email tidak valid";
+    }
+    return null;
   }
 
   String? validateNimNIK(String? value) {
@@ -188,7 +232,48 @@ class AuthController extends GetxController {
     return null;
   }
 
-  bool loginValid() {
+  String? validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Konfirmasi password tidak boleh kosong";
+    }
+    if (value != registerPasswordController.text) {
+      return "Konfirmasi password tidak cocok";
+    }
+    return null;
+  }
+
+  String? validateFaculty(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Fakultas tidak boleh kosong";
+    }
+    return null;
+  }
+
+  String? validateStudyProgram(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Program studi tidak boleh kosong";
+    }
+    return null;
+  }
+
+  String? validateGraduationYear(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Tahun lulus tidak boleh kosong";
+    }
+    if (int.tryParse(value) == null) {
+      return "Tahun lulus harus berupa angka";
+    }
+    return null;
+  }
+
+  String? validateTranskripIjazahFile(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Transkrip nilai/Ijazah tidak boleh kosong";
+    }
+    return null;
+  }
+
+  bool _validateLoginForm() {
     final nimError = validateNimNIK(loginNimController.text);
     final passwordError = validatePassword(loginPasswordController.text);
 
@@ -196,7 +281,11 @@ class AuthController extends GetxController {
     return isLoginValid.value;
   }
 
-  bool registerValid() {
+  bool validateLoginForm() {
+    return _validateLoginForm();
+  }
+
+  bool _validateRegisterForm() {
     if (currentRegisterPage.value == 0) {
       final fullnameValid = fullnameController.text.trim().isNotEmpty;
       final nimError = validateNimNIK(registerNimController.text);
@@ -227,6 +316,13 @@ class AuthController extends GetxController {
     }
     return isRegisterValid.value;
   }
+
+  bool validateRegisterForm() {
+    return _validateRegisterForm();
+  }
+
+  bool get isCurrentFormValid =>
+      tabController.index == 0 ? isLoginValid.value : isRegisterValid.value;
 
   Future<void> _loadLoginStatus() async {
     try {
@@ -323,7 +419,7 @@ class AuthController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-      _validateRegisterForm();
+      validateRegisterForm();
     }
   }
 
@@ -335,7 +431,7 @@ class AuthController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-      _validateRegisterForm();
+      validateRegisterForm();
     }
   }
 
@@ -351,7 +447,7 @@ class AuthController extends GetxController {
         final file = result.files.first;
         transkripIjazahFile = File(file.path!);
         transkripIjazahFileName.value = file.name;
-        _validateRegisterForm();
+        validateRegisterForm();
       } else {
         Get.snackbar(
           'Info',
@@ -371,7 +467,7 @@ class AuthController extends GetxController {
   void clearTranskripIjazahFile() {
     transkripIjazahFile = null;
     transkripIjazahFileName.value = '';
-    _validateRegisterForm();
+    validateRegisterForm();
   }
 
   Future<void> register() async {
@@ -426,68 +522,81 @@ class AuthController extends GetxController {
     }
   }
 
+  void disposeAnimationControllers() {
+    final controllers = [
+      logoAnimationController,
+      bottomContainerAnimationController,
+      welcomeLogoAgainAnimationController,
+      authSheetAnimationController,
+      sheetHeightAnimationController,
+    ];
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+  }
+
+  void disposeTextControllers() {
+    final controllers = [
+      loginNimController,
+      loginPasswordController,
+      registerNimController,
+      registerPasswordController,
+      fullnameController,
+      emailController,
+      registerConfirmPasswordController,
+      facultyController,
+      studyProgramController,
+      graduationYearController,
+    ];
+
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
 
-    loginNimController.addListener(_validateLoginForm);
-    loginPasswordController.addListener(_validateLoginForm);
-    registerNimController.addListener(_validateRegisterForm);
-    registerPasswordController.addListener(_validateRegisterForm);
-    fullnameController.addListener(_validateRegisterForm);
-    emailController.addListener(_validateRegisterForm);
-    registerConfirmPasswordController.addListener(_validateRegisterForm);
-    facultyController.addListener(_validateRegisterForm);
-    studyProgramController.addListener(_validateRegisterForm);
-    graduationYearController.addListener(_validateRegisterForm);
-    transkripIjazahFileName.listen((_) => _validateRegisterForm());
+    loginNimController.addListener(validateLoginForm);
+    loginPasswordController.addListener(validateLoginForm);
+    registerNimController.addListener(validateRegisterForm);
+    registerPasswordController.addListener(validateRegisterForm);
+    fullnameController.addListener(validateRegisterForm);
+    emailController.addListener(validateRegisterForm);
+    registerConfirmPasswordController.addListener(validateRegisterForm);
+    facultyController.addListener(validateRegisterForm);
+    studyProgramController.addListener(validateRegisterForm);
+    graduationYearController.addListener(validateRegisterForm);
+    transkripIjazahFileName.listen((_) => validateRegisterForm());
 
-    _validateLoginForm();
-    _validateRegisterForm();
+    validateLoginForm();
+    validateRegisterForm();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadLoginStatus();
     });
   }
 
-  void _validateLoginForm() {
-    loginValid();
-  }
-
-  void _validateRegisterForm() {
-    registerValid();
-  }
-
   @override
   void onClose() {
-    loginNimController.removeListener(_validateLoginForm);
-    loginPasswordController.removeListener(_validateLoginForm);
-    registerNimController.removeListener(_validateRegisterForm);
-    registerPasswordController.removeListener(_validateRegisterForm);
-    fullnameController.removeListener(_validateRegisterForm);
-    emailController.removeListener(_validateRegisterForm);
-    registerConfirmPasswordController.removeListener(_validateRegisterForm);
-    facultyController.removeListener(_validateRegisterForm);
-    studyProgramController.removeListener(_validateRegisterForm);
-    graduationYearController.removeListener(_validateRegisterForm);
+    loginNimController.removeListener(validateLoginForm);
+    loginPasswordController.removeListener(validateLoginForm);
+    registerNimController.removeListener(validateRegisterForm);
+    registerPasswordController.removeListener(validateRegisterForm);
+    fullnameController.removeListener(validateRegisterForm);
+    emailController.removeListener(validateRegisterForm);
+    registerConfirmPasswordController.removeListener(validateRegisterForm);
+    facultyController.removeListener(validateRegisterForm);
+    studyProgramController.removeListener(validateRegisterForm);
+    graduationYearController.removeListener(validateRegisterForm);
 
-    logoAnimationController.dispose();
-    bottomContainerAnimationController.dispose();
-    welcomeLogoAgainAnimationController.dispose();
-    authSheetAnimationController.dispose();
-    sheetHeightAnimationController.dispose();
+    disposeAnimationControllers();
+    disposeTextControllers();
+
     tabController.dispose();
     registerPageController.dispose();
-    loginNimController.dispose();
-    loginPasswordController.dispose();
-    registerNimController.dispose();
-    registerPasswordController.dispose();
-    fullnameController.dispose();
-    emailController.dispose();
-    registerConfirmPasswordController.dispose();
-    facultyController.dispose();
-    studyProgramController.dispose();
-    graduationYearController.dispose();
+
     super.onClose();
   }
 }

@@ -20,7 +20,7 @@ class RegisterForm extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             onPageChanged: (index) {
               controller.currentRegisterPage.value = index;
-              controller.registerValid();
+              controller.isRegisterValid.value;
             },
             children: [
               RegisterPage1(controller: controller),
