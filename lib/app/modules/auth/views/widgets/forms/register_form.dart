@@ -14,22 +14,30 @@ class RegisterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Flexible(
-          child: PageView(
-            controller: controller.registerPageController,
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (index) {
-              controller.currentRegisterPage.value = index;
-              controller.isRegisterValid.value;
-            },
-            children: [
-              RegisterPage1(controller: controller),
-              RegisterPage2(controller: controller),
-            ],
-          ),
+        Expanded(
+          child: controller.isAnimationsInitialized
+              ? PageView(
+                  controller: controller.registerPageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) {
+                    controller.currentRegisterPage.value = index;
+                    controller.validateRegisterForm();
+                  },
+                  children: [
+                    RegisterPage1(controller: controller),
+                    RegisterPage2(controller: controller),
+                  ],
+                )
+              : Container(child: Center(child: CircularProgressIndicator())),
         ),
         Container(
-          padding: const EdgeInsets.only(left: 24, right: 24, bottom: 100),
+          padding: const EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 16,
+            bottom: 24,
+          ),
+          color: Theme.of(context).colorScheme.surface,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -81,7 +89,7 @@ class RegisterForm extends StatelessWidget {
         text: controller.currentRegisterPage.value == 0
             ? 'Selanjutnya'
             : 'Daftar',
-        height: 48,
+        height: 56,
         textSize: 16,
         disabledForegroundColor: context.colorScheme.textOnSecondary,
         color: controller.isRegisterValid.value

@@ -14,7 +14,7 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Form(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

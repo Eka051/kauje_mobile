@@ -13,6 +13,9 @@ class AuthController extends GetxController {
   final loginFormKey = GlobalKey<FormState>();
   final registerFormKey = GlobalKey<FormState>();
 
+  bool _isAnimationsInitialized = false;
+  bool get isAnimationsInitialized => _isAnimationsInitialized;
+
   late AnimationController logoAnimationController;
   late Animation<double> logoPositionAnimation;
   late Animation<double> logoOpacityAnimation;
@@ -59,6 +62,8 @@ class AuthController extends GetxController {
   final isLoggedIn = false.obs;
 
   void initAnimations(TickerProvider vsync) {
+    if (_isAnimationsInitialized) return;
+
     tabController = TabController(length: 2, vsync: vsync);
     registerPageController = PageController();
 
@@ -143,9 +148,13 @@ class AuthController extends GetxController {
             curve: Curves.easeOut,
           ),
         );
+
+    _isAnimationsInitialized = true;
   }
 
   void startFlow() async {
+    if (!_isAnimationsInitialized) return;
+
     logoAnimationController.forward();
     await Future.delayed(const Duration(milliseconds: 800));
     bottomContainerAnimationController.forward();
@@ -184,8 +193,6 @@ class AuthController extends GetxController {
     transkripIjazahFileName.listen((_) {
       validateRegisterForm();
     });
-
-    return;
   }
 
   void togglePasswordVisibility(RxBool visibility) {
@@ -322,7 +329,9 @@ class AuthController extends GetxController {
   }
 
   bool get isCurrentFormValid =>
-      tabController.index == 0 ? isLoginValid.value : isRegisterValid.value;
+      _isAnimationsInitialized && tabController.index == 0
+      ? isLoginValid.value
+      : isRegisterValid.value;
 
   Future<void> _loadLoginStatus() async {
     try {
@@ -412,6 +421,8 @@ class AuthController extends GetxController {
   }
 
   void nextRegisterPage() {
+    if (!_isAnimationsInitialized) return;
+
     if (currentRegisterPage.value == 0 && isRegisterValid.value) {
       currentRegisterPage.value = 1;
       _saveLastRegisterPage(1);
@@ -424,6 +435,8 @@ class AuthController extends GetxController {
   }
 
   void previousRegisterPage() {
+    if (!_isAnimationsInitialized) return;
+
     if (currentRegisterPage.value == 1) {
       currentRegisterPage.value = 0;
       _saveLastRegisterPage(0);
@@ -523,6 +536,8 @@ class AuthController extends GetxController {
   }
 
   void disposeAnimationControllers() {
+    if (!_isAnimationsInitialized) return;
+
     final controllers = [
       logoAnimationController,
       bottomContainerAnimationController,
@@ -594,8 +609,10 @@ class AuthController extends GetxController {
     disposeAnimationControllers();
     disposeTextControllers();
 
-    tabController.dispose();
-    registerPageController.dispose();
+    if (_isAnimationsInitialized) {
+      tabController.dispose();
+      registerPageController.dispose();
+    }
 
     super.onClose();
   }

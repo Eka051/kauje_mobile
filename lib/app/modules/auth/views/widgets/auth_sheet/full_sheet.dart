@@ -13,7 +13,11 @@ class FullSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final totalHeight = screenHeight * 0.95;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    final minSpaceFromTop = 120.0;
+    final availableHeight = screenHeight - keyboardHeight - minSpaceFromTop;
+    final totalHeight = availableHeight.clamp(420.0, screenHeight * 0.95);
 
     return SizedBox(
       height: totalHeight,
@@ -72,14 +76,21 @@ class FullSheet extends StatelessWidget {
                     children: [
                       const SizedBox(height: 24),
                       AuthTabBar(controller: controller),
+                      const SizedBox(height: 16),
                       Expanded(
-                        child: TabBarView(
-                          controller: controller.tabController,
-                          children: [
-                            LoginForm(controller: controller),
-                            RegisterForm(controller: controller),
-                          ],
-                        ),
+                        child: controller.isAnimationsInitialized
+                            ? TabBarView(
+                                controller: controller.tabController,
+                                children: [
+                                  LoginForm(controller: controller),
+                                  RegisterForm(controller: controller),
+                                ],
+                              )
+                            : Container(
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
                       ),
                     ],
                   ),
@@ -113,72 +124,83 @@ class AuthTabBar extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: TabBar(
-            physics: NeverScrollableScrollPhysics(),
-            controller: controller.tabController,
-            labelColor: context.colorScheme.onSurface,
-            unselectedLabelColor: context.colorScheme.onSurfaceVariant,
-            indicator: BoxDecoration(
-              color: context.primaryColor,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: context.colorScheme.dividerColor.withAlpha(150),
-                width: 2,
-              ),
-            ),
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            indicatorPadding: const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 4,
-            ),
-            tabs: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 48,
-                child: Tab(
-                  child: AnimatedBuilder(
-                    animation: controller.tabController,
-                    builder: (context, child) {
-                      final selected = controller.tabController.index == 0;
-                      return Text(
-                        'Masuk',
-                        textAlign: TextAlign.center,
-                        style: AppThemeExtension(context).textTheme.bodyLarge!
-                            .copyWith(
-                              color: selected
-                                  ? context.colorScheme.onSurface
-                                  : context.colorScheme.textTertiary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                      );
-                    },
+          child: controller.isAnimationsInitialized
+              ? TabBar(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: controller.tabController,
+                  labelColor: context.colorScheme.onSurface,
+                  unselectedLabelColor: context.colorScheme.onSurfaceVariant,
+                  indicator: BoxDecoration(
+                    color: context.primaryColor,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: context.colorScheme.dividerColor.withAlpha(150),
+                      width: 2,
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 48,
-                child: Tab(
-                  child: AnimatedBuilder(
-                    animation: controller.tabController,
-                    builder: (context, child) {
-                      final selected = controller.tabController.index == 1;
-                      return Text(
-                        'Daftar',
-                        textAlign: TextAlign.center,
-                        style: AppThemeExtension(context).textTheme.bodyLarge!
-                            .copyWith(
-                              color: selected
-                                  ? context.colorScheme.onSurface
-                                  : context.colorScheme.textTertiary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                      );
-                    },
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  indicatorPadding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 4,
                   ),
+                  tabs: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 48,
+                      child: Tab(
+                        child: AnimatedBuilder(
+                          animation: controller.tabController,
+                          builder: (context, child) {
+                            final selected =
+                                controller.tabController.index == 0;
+                            return Text(
+                              'Masuk',
+                              textAlign: TextAlign.center,
+                              style: AppThemeExtension(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: selected
+                                        ? context.colorScheme.onSurface
+                                        : context.colorScheme.textTertiary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 48,
+                      child: Tab(
+                        child: AnimatedBuilder(
+                          animation: controller.tabController,
+                          builder: (context, child) {
+                            final selected =
+                                controller.tabController.index == 1;
+                            return Text(
+                              'Daftar',
+                              textAlign: TextAlign.center,
+                              style: AppThemeExtension(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: selected
+                                        ? context.colorScheme.onSurface
+                                        : context.colorScheme.textTertiary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Container(
+                  height: 52,
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-              ),
-            ],
-          ),
         );
       },
     );

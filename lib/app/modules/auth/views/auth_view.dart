@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
+import 'package:kauje_mobile/app/theme/app_theme.dart';
 import '../controllers/auth_controller.dart';
 import 'widgets/splash/splash_widgets.dart';
 import 'widgets/auth_sheet/full_sheet.dart';
@@ -24,10 +26,11 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: Container(
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: const BoxDecoration(
@@ -36,15 +39,18 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               fit: BoxFit.cover,
             ),
           ),
-          child: Obx(
-            () => Stack(
-              alignment: Alignment.center,
-              children: [
-                if (controller.flowState.value == AuthFlowState.splashing)
-                  SplashWidgets(controller: controller)
-                else
-                  _buildAuthWidgets(),
-              ],
+          child: SafeArea(
+            bottom: false,
+            child: Obx(
+              () => Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (controller.flowState.value == AuthFlowState.splashing)
+                    SplashWidgets(controller: controller)
+                  else
+                    _buildAuthWidgets(),
+                ],
+              ),
             ),
           ),
         ),
