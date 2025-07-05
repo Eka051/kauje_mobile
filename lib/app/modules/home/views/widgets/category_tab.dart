@@ -30,51 +30,59 @@ class CategoryTab extends StatelessWidget {
           final isSelected = selectedIndex == index;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    tabIcons[index],
-                    width: 16,
-                    height: 16,
-                    colorFilter: isSelected
-                        ? ColorFilter.mode(
-                            context.colorScheme.error,
-                            BlendMode.srcIn,
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    categories[index],
-                    style: TextStyle(
-                      color: isSelected
-                          ? context.colorScheme.onPrimary
-                          : context.colorScheme.labelColor,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                splashFactory: NoSplash.splashFactory,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+              ),
+              child: ChoiceChip(
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      tabIcons[index],
+                      width: 16,
+                      height: 16,
+                      colorFilter: isSelected
+                          ? ColorFilter.mode(
+                              context.colorScheme.error,
+                              BlendMode.srcIn,
+                            )
+                          : null,
                     ),
-                  ),
-                ],
-              ),
-              selected: isSelected,
-              showCheckmark: false,
-              onSelected: (_) => onTap(index),
-              selectedColor: context.colorScheme.primary,
-              backgroundColor:
-                  context.colorScheme.surfaceContainerLowest,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.black : Colors.grey[700],
-                fontWeight: FontWeight.bold,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: BorderSide(
-                  width: 2,
-                  color: isSelected
-                      ? context.colorScheme.surface
-                      : context.colorScheme.surfaceContainerLowest,
+                    const SizedBox(width: 12),
+                    Text(
+                      categories[index],
+                      style: TextStyle(
+                        color: isSelected
+                            ? context.colorScheme.onSurface
+                            : context.colorScheme.labelColor,
+                      ),
+                    ),
+                  ],
                 ),
+                selected: isSelected,
+                showCheckmark: false,
+                onSelected: (_) => onTap(index),
+                selectedColor: context.colorScheme.primary,
+                backgroundColor: context.colorScheme.surfaceContainerLowest,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: BorderSide(
+                    width: 2,
+                    color: isSelected
+                        ? context.colorScheme.surface
+                        : context.colorScheme.surfaceContainerLowest,
+                  ),
+                ),
+                selectedShadowColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                elevation: 0,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           );

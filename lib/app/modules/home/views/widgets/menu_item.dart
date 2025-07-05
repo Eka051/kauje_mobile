@@ -31,6 +31,9 @@ class MenuItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
@@ -42,13 +45,13 @@ class MenuItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(icon, width: 30, height: 30),
+              Image.asset(icon, width: 32, height: 32),
               Flexible(
                 child: Text(
                   text,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: _getTextColor(context, backgroundColor),
-                    fontSize: 8,
+                    fontSize: 8.5,
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,

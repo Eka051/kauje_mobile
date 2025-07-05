@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
@@ -41,7 +42,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +87,7 @@ class HomeView extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 16),
                           padding: const EdgeInsets.all(16.0),
                           width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.2,
+                          height: MediaQuery.of(context).size.height * 0.22,
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
@@ -107,7 +108,8 @@ class HomeView extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
+                                  Flexible(
+                                    fit: FlexFit.tight,
                                     child: RichText(
                                       text: TextSpan(
                                         children: [
@@ -133,9 +135,13 @@ class HomeView extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Iconify(
-                                    Ph.identification_card,
-                                    size: 32,
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: SvgPicture.asset(
+                                      AppIcons.idCard,
+                                      width: 45,
+                                      height: 45,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -194,7 +200,7 @@ class HomeView extends StatelessWidget {
               () => Positioned(
                 left: 0,
                 right: 0,
-                top: 410,
+                top: 390,
                 child: CategoryTab(
                   categories: controller.categories,
                   tabIcons: controller.categoryIcons,

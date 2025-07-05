@@ -10,6 +10,11 @@ class AppIcons {
   static const String lowonganIcon = 'assets/icons/lowongan-icon.png';
   static const String kolaborasiIcon = 'assets/icons/kolaborasi-icon.png';
   static const String forumIcon = 'assets/icons/forum-icon.png';
+
+  static const String idCard = 'assets/icons/user-card-id.svg';
+  static const String uploadIcon = 'assets/icons/upload.svg';
+  static const String eyeIcon = 'assets/icons/eye.svg';
+  static const String eyeOff = 'assets/icons/eye-off.svg';
 }
 
 class AppTabIcon {
