@@ -28,7 +28,7 @@ class RegisterForm extends StatelessWidget {
                     RegisterPage2(controller: controller),
                   ],
                 )
-              : Container(child: Center(child: CircularProgressIndicator())),
+              : Center(child: CircularProgressIndicator()),
         ),
         Container(
           padding: const EdgeInsets.only(

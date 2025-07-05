@@ -233,4 +233,5 @@ extension CustomColors on ColorScheme {
   Color get softBlue => AppColors.softBlue;
   Color get labelColor => AppColors.labelColor;
   Color get tabColor => AppColors.tabColor;
+  Color get gray20 => AppColors.gray20;
 }

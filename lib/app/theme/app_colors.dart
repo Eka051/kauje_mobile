@@ -25,4 +25,5 @@ class AppColors {
   static const softBlue = Color(0xFFF3F3FE);
   static const labelColor = Color(0xFF989CA1);
   static const tabColor = Color(0xFFF9DE16);
+  static const gray20 = Color(0xFFD6D5D5);
 }
