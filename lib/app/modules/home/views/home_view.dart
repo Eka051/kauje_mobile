@@ -5,16 +5,18 @@ import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/entypo.dart';
 import 'package:iconify_flutter/icons/ph.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
+import 'package:kauje_mobile/app/modules/home/views/widgets/category_tab.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/menu_item.dart';
 import 'package:kauje_mobile/app/theme/app_colors.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 
 import '../controllers/home_controller.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(HomeController());
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -186,6 +188,20 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            Obx(
+              () => Positioned(
+                left: 0,
+                right: 0,
+                top: 410,
+                child: CategoryTab(
+                  categories: controller.categories,
+                  tabIcons: controller.categoryIcons,
+                  tabColors: controller.categoryColors,
+                  selectedIndex: controller.selectedCategory.value,
+                  onTap: controller.updateSelectedCategory,
+                ),
               ),
             ),
           ],

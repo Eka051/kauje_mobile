@@ -11,3 +11,11 @@ class AppIcons {
   static const String kolaborasiIcon = 'assets/icons/kolaborasi-icon.png';
   static const String forumIcon = 'assets/icons/forum-icon.png';
 }
+
+class AppTabIcon {
+  static const String populer = 'assets/icons/populer-tab.svg';
+  static const String kolaborasi = 'assets/icons/kolaborasi-tab.svg';
+  static const String berita = 'assets/icons/berita-tab.svg';
+  static const String etalase = 'assets/icons/etalase-tab.svg';
+  static const String lowongan = 'assets/icons/lowongan-tab.svg';
+}
