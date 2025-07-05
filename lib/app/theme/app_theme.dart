@@ -13,6 +13,7 @@ class AppTheme {
       secondary: AppColors.secondary,
       surface: AppColors.surface,
       surfaceContainerHighest: AppColors.surfaceVariant,
+      surfaceContainer: AppColors.surfaceContainer,
       error: AppColors.error,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
@@ -36,7 +37,7 @@ class AppTheme {
       displaySmall: TextStyle(
         color: AppColors.textPrimary,
         fontSize: 24,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
       ),
       headlineLarge: TextStyle(
         color: AppColors.textPrimary,
@@ -226,4 +227,8 @@ extension CustomColors on ColorScheme {
   Color get borderPrimary => AppColors.borderPrimary;
   Color get borderSecondary => AppColors.borderSecondary;
   Color get dividerColor => AppColors.divider;
+  Color get darkRed => AppColors.darkRed;
+  Color get darkBlue => AppColors.darkBlue;
+  Color get softRed => AppColors.softRed;
+  Color get softBlue => AppColors.softBlue;
 }

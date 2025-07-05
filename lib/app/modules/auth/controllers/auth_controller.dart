@@ -155,6 +155,8 @@ class AuthController extends GetxController {
   void startFlow() async {
     if (!_isAnimationsInitialized) return;
 
+    final isUserLoggedIn = await checkLoginStatus();
+
     logoAnimationController.forward();
     await Future.delayed(const Duration(milliseconds: 800));
     bottomContainerAnimationController.forward();
@@ -162,6 +164,13 @@ class AuthController extends GetxController {
     showWelcomeLogoAgain.value = true;
     welcomeLogoAgainAnimationController.forward();
     await Future.delayed(const Duration(milliseconds: 800));
+
+    if (isUserLoggedIn) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      Get.offAllNamed('/home');
+      return;
+    }
+
     flowState.value = AuthFlowState.auth;
     authSheetAnimationController.forward();
   }
@@ -280,16 +289,12 @@ class AuthController extends GetxController {
     return null;
   }
 
-  bool _validateLoginForm() {
+  bool validateLoginForm() {
     final nimError = validateNimNIK(loginNimController.text);
     final passwordError = validatePassword(loginPasswordController.text);
 
     isLoginValid.value = (nimError == null && passwordError == null);
     return isLoginValid.value;
-  }
-
-  bool validateLoginForm() {
-    return _validateLoginForm();
   }
 
   bool _validateRegisterForm() {
@@ -377,6 +382,13 @@ class AuthController extends GetxController {
   Future<bool> checkLoginStatus() async {
     await _loadLoginStatus();
     return isLoggedIn.value;
+  }
+
+  Future<void> validateAuthenticatedUser() async {
+    final isUserLoggedIn = await checkLoginStatus();
+    if (isUserLoggedIn) {
+      Get.offAllNamed('/home');
+    }
   }
 
   Future<void> login() async {
