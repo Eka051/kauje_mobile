@@ -10,13 +10,15 @@ class AppIcons {
   static const String lowonganIcon = 'assets/icons/lowongan-icon.png';
   static const String kolaborasiIcon = 'assets/icons/kolaborasi-icon.png';
   static const String forumIcon = 'assets/icons/forum-icon.png';
-}
 
-class AppIconsSvg {
-  static const String idCard = 'assets/icons/user-card-id.svg';
+  static const String idCard = 'assets/icons/id-card.svg';
   static const String uploadIcon = 'assets/icons/upload.svg';
-  static const String eyeIcon = 'assets/icons/eye.svg';
+  static const String eyeOn = 'assets/icons/eye-on.svg';
   static const String eyeOff = 'assets/icons/eye-off.svg';
+  static const String homeIcon = 'assets/icons/home.svg';
+  static const String homeFillIcon = 'assets/icons/home-fill.svg';
+  static const String profileIcon = 'assets/icons/profile.svg';
+  static const String profileFillIcon = 'assets/icons/profile-fill.svg';
 }
 
 class AppTabIcon {
