@@ -167,7 +167,7 @@ class AuthController extends GetxController {
 
     if (isUserLoggedIn) {
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offAllNamed('/home');
+      Get.offAllNamed('/main');
       return;
     }
 
@@ -415,7 +415,7 @@ class AuthController extends GetxController {
           content: Text("Selamat datang kembali!"),
           actions: [
             TextButton(
-              onPressed: () => Get.offAllNamed('/home'),
+              onPressed: () => Get.offAllNamed('/main'),
               child: Text("OK"),
             ),
           ],
