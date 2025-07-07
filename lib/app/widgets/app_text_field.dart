@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 
 class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  final String? Function(String?)? validator;
   final bool obscureText;
   final TextInputType keyboardType;
   final double? height;
@@ -12,6 +15,8 @@ class AppTextField extends StatelessWidget {
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
   final bool showPasswordToggle;
+  final bool? enabled;
+  final bool? readOnly;
   final String? passwordChar;
   final VoidCallback? onTogglePassword;
 
@@ -19,6 +24,7 @@ class AppTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
+    this.validator,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.height,
@@ -26,6 +32,8 @@ class AppTextField extends StatelessWidget {
     this.maxLength,
     this.inputFormatters,
     this.showPasswordToggle = false,
+    this.enabled,
+    this.readOnly,
     this.passwordChar,
     this.onTogglePassword,
   });
@@ -40,7 +48,7 @@ class AppTextField extends StatelessWidget {
 
     return SizedBox(
       width: width,
-      child: TextField(
+      child: TextFormField(
         maxLength: maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
         controller: controller,
@@ -48,6 +56,9 @@ class AppTextField extends StatelessWidget {
         keyboardType: keyboardType,
         obscuringCharacter: passwordChar ?? '•',
         inputFormatters: inputFormatters,
+        enabled: enabled,
+        readOnly: readOnly ?? false,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: context.textTheme.bodyMedium?.copyWith(
@@ -60,12 +71,23 @@ class AppTextField extends StatelessWidget {
             borderSide: BorderSide(color: context.colorScheme.borderPrimary),
           ),
           suffixIcon: showPasswordToggle
-              ? IconButton(
-                  icon: Icon(
-                    isObscured ? Icons.visibility_off : Icons.visibility,
-                    color: context.colorScheme.textSecondary,
+              ? GestureDetector(
+                  onTap: onTogglePassword,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 10.0,
+                    ),
+                    child: SizedBox(
+                      child: SvgPicture.asset(
+                        isObscured ? AppIcons.eyeOff : AppIcons.eyeOn,
+                        colorFilter: ColorFilter.mode(
+                          context.colorScheme.labelColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
                   ),
-                  onPressed: onTogglePassword,
                 )
               : null,
           contentPadding: EdgeInsets.symmetric(

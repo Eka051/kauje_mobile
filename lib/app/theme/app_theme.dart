@@ -13,6 +13,7 @@ class AppTheme {
       secondary: AppColors.secondary,
       surface: AppColors.surface,
       surfaceContainerHighest: AppColors.surfaceVariant,
+      surfaceContainer: AppColors.surfaceContainer,
       error: AppColors.error,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
@@ -36,7 +37,7 @@ class AppTheme {
       displaySmall: TextStyle(
         color: AppColors.textPrimary,
         fontSize: 24,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
       ),
       headlineLarge: TextStyle(
         color: AppColors.textPrimary,
@@ -68,9 +69,9 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16),
-      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14),
-      bodySmall: TextStyle(color: AppColors.textPrimary, fontSize: 12),
+      bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w500),
+      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500),
+      bodySmall: TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w500),
       labelLarge: TextStyle(
         color: AppColors.textPrimary,
         fontSize: 14,
@@ -226,4 +227,11 @@ extension CustomColors on ColorScheme {
   Color get borderPrimary => AppColors.borderPrimary;
   Color get borderSecondary => AppColors.borderSecondary;
   Color get dividerColor => AppColors.divider;
+  Color get darkRed => AppColors.darkRed;
+  Color get darkBlue => AppColors.darkBlue;
+  Color get softRed => AppColors.softRed;
+  Color get softBlue => AppColors.softBlue;
+  Color get labelColor => AppColors.labelColor;
+  Color get tabColor => AppColors.tabColor;
+  Color get gray20 => AppColors.gray20;
 }
