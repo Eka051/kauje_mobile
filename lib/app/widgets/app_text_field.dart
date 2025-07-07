@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 
 class AppTextField extends StatelessWidget {
@@ -69,12 +71,23 @@ class AppTextField extends StatelessWidget {
             borderSide: BorderSide(color: context.colorScheme.borderPrimary),
           ),
           suffixIcon: showPasswordToggle
-              ? IconButton(
-                  icon: Icon(
-                    isObscured ? Icons.visibility_off : Icons.visibility,
-                    color: context.colorScheme.textSecondary,
+              ? GestureDetector(
+                  onTap: onTogglePassword,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 10.0,
+                    ),
+                    child: SizedBox(
+                      child: SvgPicture.asset(
+                        isObscured ? AppIcons.eyeOff : AppIcons.eyeOn,
+                        colorFilter: ColorFilter.mode(
+                          context.colorScheme.labelColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
                   ),
-                  onPressed: onTogglePassword,
                 )
               : null,
           contentPadding: EdgeInsets.symmetric(

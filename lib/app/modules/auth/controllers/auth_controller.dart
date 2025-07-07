@@ -297,7 +297,7 @@ class AuthController extends GetxController {
     return isLoginValid.value;
   }
 
-  bool _validateRegisterForm() {
+  bool validateRegisterForm() {
     if (currentRegisterPage.value == 0) {
       final fullnameValid = fullnameController.text.trim().isNotEmpty;
       final nimError = validateNimNIK(registerNimController.text);
@@ -327,10 +327,6 @@ class AuthController extends GetxController {
           transkripValid);
     }
     return isRegisterValid.value;
-  }
-
-  bool validateRegisterForm() {
-    return _validateRegisterForm();
   }
 
   bool get isCurrentFormValid =>

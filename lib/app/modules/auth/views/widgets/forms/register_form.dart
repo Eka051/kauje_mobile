@@ -12,42 +12,81 @@ class RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: controller.isAnimationsInitialized
-              ? PageView(
-                  controller: controller.registerPageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  onPageChanged: (index) {
-                    controller.currentRegisterPage.value = index;
-                    controller.validateRegisterForm();
-                  },
-                  children: [
-                    RegisterPage1(controller: controller),
-                    RegisterPage2(controller: controller),
-                  ],
-                )
-              : Center(child: CircularProgressIndicator()),
-        ),
-        Container(
-          padding: const EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 16,
-            bottom: 24,
-          ),
-          color: Theme.of(context).colorScheme.surface,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildPageIndicator(context),
-              const SizedBox(height: 16),
-              _buildRegisterButton(context),
+              SizedBox(
+                height: constraints.maxHeight - 120,
+                child: controller.isAnimationsInitialized
+                    ? PageView(
+                        controller: controller.registerPageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onPageChanged: (index) {
+                          controller.currentRegisterPage.value = index;
+                          controller.validateRegisterForm();
+                        },
+                        children: [
+                          SingleChildScrollView(
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                RegisterPage1(controller: controller),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 24,
+                                    right: 24,
+                                    bottom: 12,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _buildPageIndicator(context),
+                                      const SizedBox(height: 16),
+                                      _buildRegisterButton(context),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                RegisterPage2(controller: controller),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 24,
+                                    right: 24,
+                                    bottom: 12,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _buildPageIndicator(context),
+                                      const SizedBox(height: 16),
+                                      _buildRegisterButton(context),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(child: CircularProgressIndicator()),
+              ),
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
