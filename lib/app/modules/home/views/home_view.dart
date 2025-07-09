@@ -10,12 +10,11 @@ import 'package:kauje_mobile/app/theme/app_theme.dart';
 import 'package:kauje_mobile/app/widgets/header.dart';
 import '../controllers/home_controller.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeController());
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

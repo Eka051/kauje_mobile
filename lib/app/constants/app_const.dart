@@ -1,9 +1,11 @@
 class AppImages {
   static const String bgSplashscreen = 'assets/images/bg-splashscreen.png';
   static const String bgGradient = 'assets/images/bg-gradient.png';
-  static const String bgProfileGradient = 'assets/images/bg-profile-gradient.png';
+  static const String bgProfileGradient =
+      'assets/images/bg-profile-gradient.png';
   static const String welcomeLogo = 'assets/images/welcome-logo.png';
   static const String kaujeLogo = 'assets/images/kauje-logo.png';
+  static const String iDCARD = 'assets/images/ID-Card.png';
 }
 
 class AppIcons {
@@ -15,6 +17,7 @@ class AppIcons {
 
   static const String idCard = 'assets/icons/id-card.svg';
   static const String uploadIcon = 'assets/icons/upload.svg';
+  static const String downloadIcon = 'assets/icons/download.svg';
   static const String eyeOn = 'assets/icons/eye-on.svg';
   static const String eyeOff = 'assets/icons/eye-off.svg';
   static const String homeIcon = 'assets/icons/home.svg';

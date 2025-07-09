@@ -51,7 +51,7 @@ class MenuItem extends StatelessWidget {
                   text,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: _getTextColor(context, backgroundColor),
-                    fontSize: 8.5,
+                    fontSize: 8.25,
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
