@@ -7,7 +7,20 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_inset_shadow/flutter_inset_shadow.dart';
 
 class IdCard extends StatefulWidget {
-  const IdCard({super.key});
+  final String name;
+  final String nim;
+  final String profileImage;
+  final String faculty;
+  final String major;
+
+  const IdCard({
+    super.key,
+    required this.profileImage,
+    required this.name,
+    required this.nim,
+    required this.faculty,
+    required this.major,
+  });
 
   @override
   State<IdCard> createState() => _IdCardState();
@@ -55,7 +68,7 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
         IgnorePointer(
           ignoring: showIdCard,
           child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 500),
             opacity: showIdCard ? 0 : 1,
             child: _profileCard(context),
           ),
@@ -93,8 +106,8 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: AssetImage('assets/images/profil.png'),
+              image: DecorationImage(
+                image: AssetImage(widget.profileImage),
                 fit: BoxFit.cover,
               ),
               boxShadow: [
@@ -113,11 +126,11 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
             flex: 3,
             child: RichText(
               text: TextSpan(
-                text: 'Ahimsa Jenar\n',
+                text: '${widget.name}\n',
                 style: AppThemeExtension(context).textTheme.bodyLarge,
                 children: [
                   TextSpan(
-                    text: '232410101090',
+                    text: widget.nim,
                     style: AppThemeExtension(context).textTheme.bodySmall,
                   ),
                 ],
@@ -130,8 +143,8 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
             child: InkWell(
               onTap: _toggleIdCard,
               borderRadius: BorderRadius.circular(8),
-              child: const Row(
-                children: [
+              child: Row(
+                children: const [
                   Flexible(
                     child: Text(
                       'Ketuk Untuk Melihat ID-Card',
@@ -150,7 +163,7 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
 
   Widget _idCard(BuildContext context) {
     return Container(
-      height: 500,
+      height: 260,
       color: Colors.transparent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -195,7 +208,7 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
                               ).textTheme.labelSmall,
                             ),
                             QrImageView(
-                              data: '232410101090',
+                              data: widget.nim,
                               version: QrVersions.min,
                               size: 85,
                               gapless: false,
@@ -230,7 +243,7 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(2),
                                   child: Image.asset(
-                                    'assets/images/profil.png',
+                                    widget.profileImage,
                                     height: 48,
                                     width: 48,
                                     fit: BoxFit.cover,
@@ -240,13 +253,13 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
                               const SizedBox(width: 8),
                               RichText(
                                 text: TextSpan(
-                                  text: 'Ahimsa Jenar\n',
+                                  text: '${widget.name}\n',
                                   style: AppThemeExtension(
                                     context,
                                   ).textTheme.bodyLarge,
                                   children: [
                                     TextSpan(
-                                      text: '232410101090',
+                                      text: widget.nim,
                                       style: AppThemeExtension(
                                         context,
                                       ).textTheme.bodySmall,
@@ -259,13 +272,13 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
                           RichText(
                             textAlign: TextAlign.end,
                             text: TextSpan(
-                              text: 'Fakultas Ilmu Komputer\n',
+                              text: '${widget.faculty}\n',
                               style: AppThemeExtension(
                                 context,
                               ).textTheme.bodySmall,
                               children: [
                                 TextSpan(
-                                  text: 'Sistem Informasi',
+                                  text: widget.major,
                                   style: AppThemeExtension(
                                     context,
                                   ).textTheme.bodySmall,
@@ -285,40 +298,62 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
           Row(
             children: [
               Expanded(
-                child: AppFilledButton(
-                  onPressed: _toggleIdCard,
-                  color: context.colorScheme.surface,
-                  text: 'Tutup',
-                  textColor: context.colorScheme.onSurface,
-                  prefixIcon: Icon(
-                    Icons.arrow_back,
-                    color: context.colorScheme.onSurface,
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colorScheme.surfaceContainer,
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  iconColor: context.colorScheme.onSurface,
-                  height: 32,
-                  borderRadius: 4,
-                  borderSide: BorderSide(
-                    color: context.colorScheme.accent,
-                    width: 1,
+                  child: AppFilledButton(
+                    onPressed: _toggleIdCard,
+                    color: context.colorScheme.surface,
+                    text: 'Tutup',
+                    textColor: context.colorScheme.onSurface,
+                    prefixIcon: Icon(
+                      Icons.arrow_back,
+                      color: context.colorScheme.onSurface,
+                    ),
+                    iconColor: context.colorScheme.onSurface,
+                    height: 32,
+                    borderRadius: 4,
+                    borderSide: BorderSide(
+                      color: context.colorScheme.accent,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: AppFilledButton(
-                  onPressed: () {},
-                  text: 'Unduh ID Card',
-                  textColor: context.colorScheme.onSurface,
-                  iconColor: context.colorScheme.onSurface,
-                  suffixIcon: SvgPicture.asset(
-                    AppIcons.downloadIcon,
-                    height: 18,
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colorScheme.surfaceContainer,
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  height: 32,
-                  borderRadius: 4,
-                  borderSide: BorderSide(
-                    color: context.colorScheme.accent,
-                    width: 1,
+                  child: AppFilledButton(
+                    onPressed: () {},
+                    text: 'Unduh ID-Card',
+                    textColor: context.colorScheme.onSurface,
+                    iconColor: context.colorScheme.onSurface,
+                    suffixIcon: SvgPicture.asset(
+                      AppIcons.downloadIcon,
+                      height: 18,
+                    ),
+                    height: 32,
+                    borderRadius: 4,
+                    borderSide: BorderSide(
+                      color: context.colorScheme.accent,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),

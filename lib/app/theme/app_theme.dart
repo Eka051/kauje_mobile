@@ -69,9 +69,21 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w500),
-      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500),
-      bodySmall: TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w500),
+      bodyLarge: TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyMedium: TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      bodySmall: TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
       labelLarge: TextStyle(
         color: AppColors.textPrimary,
         fontSize: 14,
@@ -224,11 +236,15 @@ extension CustomColors on ColorScheme {
   Color get textOnSecondary => AppColors.textOnSecondary;
   Color get textTertiary => AppColors.textTertiary;
   Color get neutral => AppColors.neutral;
+  Color get neutralVariant => AppColors.neutralVariant;
   Color get borderPrimary => AppColors.borderPrimary;
   Color get borderSecondary => AppColors.borderSecondary;
   Color get dividerColor => AppColors.divider;
   Color get darkRed => AppColors.darkRed;
+  Color get red => AppColors.red;
   Color get darkBlue => AppColors.darkBlue;
+  Color get blue => AppColors.blue;
+  Color get lightBlue => AppColors.lightBlue;
   Color get softRed => AppColors.softRed;
   Color get softBlue => AppColors.softBlue;
   Color get labelColor => AppColors.labelColor;

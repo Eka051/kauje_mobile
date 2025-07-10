@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 import 'package:kauje_mobile/app/widgets/app_text_field.dart';
+import 'package:kauje_mobile/app/widgets/file_upload.dart';
 import 'package:kauje_mobile/app/widgets/label_text.dart';
 import '../../../controllers/auth_controller.dart';
 
@@ -82,51 +83,10 @@ class RegisterPage2 extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Obx(
-            () => GestureDetector(
-              onTap: controller.pickTranskripIjazahFile,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: context.colorScheme.borderPrimary,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                  color: context.colorScheme.surface,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.file_upload_outlined,
-                      color: context.colorScheme.textSecondary,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        controller.transkripIjazahFileName.value.isNotEmpty
-                            ? controller.transkripIjazahFileName.value
-                            : 'Unggah Berkas',
-                        style: AppThemeExtension(context).textTheme.bodyMedium!
-                            .copyWith(color: context.colorScheme.textSecondary),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (controller.transkripIjazahFileName.value.isNotEmpty)
-                      GestureDetector(
-                        onTap: controller.clearTranskripIjazahFile,
-                        child: Icon(
-                          Icons.close,
-                          color: context.colorScheme.textSecondary,
-                          size: 20,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+            () => FileUpload(
+              fileName: controller.transkripIjazahFileName.value,
+              onPickFile: controller.pickTranskripIjazahFile,
+              onClearFile: controller.clearTranskripIjazahFile,
             ),
           ),
           const SizedBox(height: 12),

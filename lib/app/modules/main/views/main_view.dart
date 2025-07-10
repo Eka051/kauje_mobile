@@ -12,76 +12,68 @@ class MainView extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: SizedBox(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight,
-            child: PageView(
-              controller: controller.pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: const [HomeView(), ProfileView()],
-            ),
+    return Obx(
+      () => Scaffold(
+        body: SizedBox.expand(
+          child: IndexedStack(
+            index: controller.selectedIndex.value,
+            children: const [HomeView(), ProfileView()],
           ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: context.colorScheme.shadow.withAlpha(40),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
+        ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: context.colorScheme.shadow.withAlpha(40),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            selectedLabelStyle: AppThemeExtension(context).textTheme.bodyMedium
+                ?.copyWith(
+                  color: context.colorScheme.onSurface,
+                  inherit: false,
                 ),
-              ],
-            ),
-            child: Obx(() {
-              return BottomNavigationBar(
-                selectedLabelStyle: AppThemeExtension(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(
-                      color: context.colorScheme.onSurface,
-                      inherit: false,
-                    ),
-                unselectedLabelStyle: AppThemeExtension(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(
-                      color: context.colorScheme.onSurface,
-                      inherit: false,
-                    ),
-                selectedItemColor: context.colorScheme.onSurface,
-                unselectedItemColor: context.colorScheme.onSurface,
-                currentIndex: controller.selectedIndex.value,
-                onTap: controller.onTabTapped,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      controller.selectedIndex.value == 0
-                          ? AppIcons.homeFillIcon
-                          : AppIcons.homeIcon,
-                      width: 32,
-                      height: 32,
-                    ),
-                    label: 'Beranda',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      controller.selectedIndex.value == 1
-                          ? AppIcons.profileFillIcon
-                          : AppIcons.profileIcon,
-                      width: 32,
-                      height: 32,
-                    ),
-                    label: 'Profil',
-                  ),
-                ],
-              );
-            }),
+            unselectedLabelStyle: AppThemeExtension(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(
+                  color: context.colorScheme.onSurface,
+                  inherit: false,
+                ),
+            selectedItemColor: context.colorScheme.onSurface,
+            unselectedItemColor: context.colorScheme.onSurface,
+            currentIndex: controller.selectedIndex.value,
+            onTap: controller.onTabTapped,
+
+            items: [
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  controller.selectedIndex.value == 0
+                      ? AppIcons.homeFillIcon
+                      : AppIcons.homeIcon,
+                  width: 32,
+                  height: 32,
+                ),
+                label: 'Beranda',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  controller.selectedIndex.value == 1
+                      ? AppIcons.profileFillIcon
+                      : AppIcons.profileIcon,
+                  width: 32,
+                  height: 32,
+                ),
+                label: 'Profil',
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
