@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kauje_mobile/app/theme/app_theme.dart';
 
 class AppFilledButton extends StatelessWidget {
   final String text;
@@ -33,7 +34,11 @@ class AppFilledButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
-          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: fontSize,
+            color: context.colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

@@ -10,12 +10,11 @@ import 'package:kauje_mobile/app/theme/app_theme.dart';
 import 'package:kauje_mobile/app/widgets/header.dart';
 import '../controllers/home_controller.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeController());
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -28,67 +27,73 @@ class HomeView extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Image.asset(
-                          AppImages.bgGradient,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                      Transform.translate(
-                        offset: Offset(0, -40),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Image.asset(AppImages.bgGradient, fit: BoxFit.fitWidth),
+            ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Stack(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, -40),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16.0,
+                                right: 16.0,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Header(),
+                                  _buildUserProfile(context),
+                                  const SizedBox(height: 52),
+                                  _buildNewsSection(controller),
+                                  const SizedBox(height: 24),
+                                ],
+                              ),
+                            ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Header(),
-                              _buildUserProfile(context),
-                              const SizedBox(height: 52),
-                              _buildNewsSection(controller),
-                              const SizedBox(height: 24),
-                            ],
+                          Obx(
+                            () => Positioned(
+                              left: 0,
+                              right: 0,
+                              top: MediaQuery.of(context).size.height * 0.4,
+                              child: CategoryTab(
+                                categories: controller.categories,
+                                tabIcons: controller.categoryIcons,
+                                tabColors: controller.categoryColors,
+                                selectedIndex:
+                                    controller.selectedCategory.value,
+                                onTap: controller.updateSelectedCategory,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      Obx(
-                        () => Positioned(
-                          left: 0,
-                          right: 0,
-                          top: MediaQuery.of(context).size.height * 0.4,
-                          child: CategoryTab(
-                            categories: controller.categories,
-                            tabIcons: controller.categoryIcons,
-                            tabColors: controller.categoryColors,
-                            selectedIndex: controller.selectedCategory.value,
-                            onTap: controller.updateSelectedCategory,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+          ],
         ),
       ),
+      // // STACK
     );
+    // STACK
   }
 
   Widget _buildUserProfile(BuildContext context) {

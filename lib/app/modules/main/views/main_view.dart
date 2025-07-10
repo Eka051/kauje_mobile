@@ -14,9 +14,11 @@ class MainView extends GetView<MainController> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        body: IndexedStack(
-          index: controller.selectedIndex.value,
-          children: const [HomeView(), ProfileView()],
+        body: SizedBox.expand(
+          child: IndexedStack(
+            index: controller.selectedIndex.value,
+            children: const [HomeView(), ProfileView()],
+          ),
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
@@ -31,14 +33,22 @@ class MainView extends GetView<MainController> {
           ),
           child: BottomNavigationBar(
             selectedLabelStyle: AppThemeExtension(context).textTheme.bodyMedium
-                ?.copyWith(color: context.colorScheme.onSurface, inherit: false),
-            unselectedLabelStyle: AppThemeExtension(context).textTheme.bodyMedium
-                ?.copyWith(color: context.colorScheme.onSurface, inherit: false),
+                ?.copyWith(
+                  color: context.colorScheme.onSurface,
+                  inherit: false,
+                ),
+            unselectedLabelStyle: AppThemeExtension(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(
+                  color: context.colorScheme.onSurface,
+                  inherit: false,
+                ),
             selectedItemColor: context.colorScheme.onSurface,
             unselectedItemColor: context.colorScheme.onSurface,
             currentIndex: controller.selectedIndex.value,
             onTap: controller.onTabTapped,
-          
+
             items: [
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
