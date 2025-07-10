@@ -86,11 +86,7 @@ class FullSheet extends StatelessWidget {
                                   RegisterForm(controller: controller),
                                 ],
                               )
-                            : Container(
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
+                            : Center(child: CircularProgressIndicator()),
                       ),
                     ],
                   ),
@@ -197,7 +193,7 @@ class AuthTabBar extends StatelessWidget {
                     ),
                   ],
                 )
-              : Container(
+              : SizedBox(
                   height: 52,
                   child: Center(child: CircularProgressIndicator()),
                 ),

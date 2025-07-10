@@ -12,6 +12,7 @@ class IdCard extends StatefulWidget {
   final String profileImage;
   final String faculty;
   final String major;
+  final ValueChanged<bool>? onToggle;
 
   const IdCard({
     super.key,
@@ -20,72 +21,46 @@ class IdCard extends StatefulWidget {
     required this.nim,
     required this.faculty,
     required this.major,
+    this.onToggle,
   });
 
   @override
   State<IdCard> createState() => _IdCardState();
 }
 
-class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
+class _IdCardState extends State<IdCard> {
   bool showIdCard = false;
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   void _toggleIdCard() {
     setState(() {
       showIdCard = !showIdCard;
-      if (showIdCard) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
+      widget.onToggle?.call(showIdCard);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        IgnorePointer(
-          ignoring: showIdCard,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 500),
-            opacity: showIdCard ? 0 : 1,
-            child: _profileCard(context),
-          ),
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeOutBack,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: showIdCard ? 16.0 : 24.0),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 400),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: showIdCard
+              ? _idCard(context, key: const ValueKey('idCard'))
+              : _profileCard(context, key: const ValueKey('profileCard')),
         ),
-        IgnorePointer(
-          ignoring: !showIdCard,
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: _idCard(context),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _profileCard(BuildContext context) {
+  Widget _profileCard(BuildContext context, {Key? key}) {
     return Container(
+      key: key,
       height: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -144,13 +119,16 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
               onTap: _toggleIdCard,
               borderRadius: BorderRadius.circular(8),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: const [
                   Flexible(
                     child: Text(
                       'Ketuk Untuk Melihat ID-Card',
+                      textAlign: TextAlign.right,
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
+                  SizedBox(width: 8),
                   Icon(Icons.arrow_upward),
                 ],
               ),
@@ -161,137 +139,135 @@ class _IdCardState extends State<IdCard> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _idCard(BuildContext context) {
+  Widget _idCard(BuildContext context, {Key? key}) {
     return Container(
-      height: 260,
+      key: key,
       color: Colors.transparent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: context.colorScheme.surfaceContainer,
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: context.colorScheme.surfaceContainer,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    AppImages.iDCARD,
+                    fit: BoxFit.fitWidth,
+                    width: double.infinity,
                   ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      AppImages.iDCARD,
-                      fit: BoxFit.fitWidth,
-                      width: double.infinity,
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 8,
-                    right: 10,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '2023-2026',
-                              style: AppThemeExtension(
-                                context,
-                              ).textTheme.labelSmall,
-                            ),
-                            QrImageView(
-                              data: widget.nim,
-                              version: QrVersions.min,
-                              size: 85,
-                              gapless: false,
-                              backgroundColor: Colors.transparent,
-                            ),
-                          ],
-                        ),
-                        Image.asset(AppImages.kaujeLogo, height: 35),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    left: 8,
-                    right: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                Positioned(
+                  top: 10,
+                  left: 8,
+                  right: 10,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                    color: context.colorScheme.primary,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2),
-                                  child: Image.asset(
-                                    widget.profileImage,
-                                    height: 48,
-                                    width: 48,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              RichText(
-                                text: TextSpan(
-                                  text: '${widget.name}\n',
-                                  style: AppThemeExtension(
-                                    context,
-                                  ).textTheme.bodyLarge,
-                                  children: [
-                                    TextSpan(
-                                      text: widget.nim,
-                                      style: AppThemeExtension(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '2023-2026',
+                            style: AppThemeExtension(
+                              context,
+                            ).textTheme.labelSmall,
                           ),
-                          RichText(
-                            textAlign: TextAlign.end,
-                            text: TextSpan(
-                              text: '${widget.faculty}\n',
-                              style: AppThemeExtension(
-                                context,
-                              ).textTheme.bodySmall,
-                              children: [
-                                TextSpan(
-                                  text: widget.major,
-                                  style: AppThemeExtension(
-                                    context,
-                                  ).textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
+                          QrImageView(
+                            data: widget.nim,
+                            version: QrVersions.min,
+                            size: 85,
+                            gapless: false,
+                            backgroundColor: Colors.transparent,
                           ),
                         ],
                       ),
+                      Image.asset(AppImages.kaujeLogo, height: 35),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  left: 8,
+                  right: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: context.colorScheme.primary,
+                                  width: 2,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: Image.asset(
+                                  widget.profileImage,
+                                  height: 48,
+                                  width: 48,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            RichText(
+                              text: TextSpan(
+                                text: '${widget.name}\n',
+                                style: AppThemeExtension(
+                                  context,
+                                ).textTheme.bodyLarge,
+                                children: [
+                                  TextSpan(
+                                    text: widget.nim,
+                                    style: AppThemeExtension(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        RichText(
+                          textAlign: TextAlign.end,
+                          text: TextSpan(
+                            text: '${widget.faculty}\n',
+                            style: AppThemeExtension(
+                              context,
+                            ).textTheme.bodySmall,
+                            children: [
+                              TextSpan(
+                                text: widget.major,
+                                style: AppThemeExtension(
+                                  context,
+                                ).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),

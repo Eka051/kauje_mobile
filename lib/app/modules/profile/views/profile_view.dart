@@ -72,7 +72,6 @@ class ProfileView extends GetView<ProfileController> {
                                             faculty: 'Fakultas Ilmu Komputer',
                                             major: 'Sistem Informasi',
                                           ),
-                                          // const SizedBox(height: 16),
                                           ProfileData(
                                             nameController:
                                                 controller.nameController,
@@ -93,7 +92,7 @@ class ProfileView extends GetView<ProfileController> {
                                                 controller.profilePicture.value,
                                             clearCvFile: () {},
                                           ),
-                                          const SizedBox(height: 16),
+                                          const SizedBox(height: 24),
                                           AppFilledButton(
                                             text: 'Keluar',
                                             onPressed: controller.logout,
