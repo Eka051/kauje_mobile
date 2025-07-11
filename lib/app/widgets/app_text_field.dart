@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 
@@ -20,6 +20,9 @@ class AppTextField extends StatelessWidget {
   final bool? readOnly;
   final String? passwordChar;
   final VoidCallback? onTogglePassword;
+  final Widget? suffixIcon;
+  final int? borderRadius;
+  final bool showBorder;
 
   const AppTextField({
     super.key,
@@ -38,6 +41,9 @@ class AppTextField extends StatelessWidget {
     this.readOnly,
     this.passwordChar,
     this.onTogglePassword,
+    this.suffixIcon,
+    this.borderRadius,
+    this.showBorder = true,
   });
 
   @override
@@ -68,10 +74,37 @@ class AppTextField extends StatelessWidget {
             fontSize: hintSize ?? 14,
             fontWeight: FontWeight.w500,
           ),
+          filled: true,
+          fillColor: context.colorScheme.surface,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: context.colorScheme.borderPrimary),
+            borderRadius: BorderRadius.circular(borderRadius?.toDouble() ?? 10),
+            borderSide: showBorder
+                ? BorderSide(color: context.colorScheme.borderPrimary)
+                : BorderSide.none,
           ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius?.toDouble() ?? 10),
+            borderSide: showBorder
+                ? BorderSide(color: context.colorScheme.borderPrimary)
+                : BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius?.toDouble() ?? 10),
+            borderSide: showBorder
+                ? BorderSide(color: context.colorScheme.primary, width: 1.6)
+                : BorderSide.none,
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius?.toDouble() ?? 10),
+            borderSide: showBorder
+                ? BorderSide(color: context.colorScheme.error, width: 1.4)
+                : BorderSide.none,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: verticalPadding > 0 ? verticalPadding : 12,
+          ),
+          counterText: '',
           suffixIcon: showPasswordToggle
               ? GestureDetector(
                   onTap: onTogglePassword,
@@ -80,23 +113,16 @@ class AppTextField extends StatelessWidget {
                       horizontal: 10.0,
                       vertical: 10.0,
                     ),
-                    child: SizedBox(
-                      child: SvgPicture.asset(
-                        isObscured ? AppIcons.eyeOff : AppIcons.eyeOn,
-                        colorFilter: ColorFilter.mode(
-                          context.colorScheme.labelColor,
-                          BlendMode.srcIn,
-                        ),
+                    child: SvgPicture.asset(
+                      isObscured ? AppIcons.eyeOff : AppIcons.eyeOn,
+                      colorFilter: ColorFilter.mode(
+                        context.colorScheme.labelColor,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
                 )
-              : null,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: verticalPadding > 0 ? verticalPadding : 12,
-          ),
-          counterText: '',
+              : suffixIcon,
         ),
       ),
     );

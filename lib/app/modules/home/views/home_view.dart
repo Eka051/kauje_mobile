@@ -5,6 +5,7 @@ import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/category_tab.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/menu_item.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/news_card_animation.dart';
+import 'package:kauje_mobile/app/modules/showcase/views/showcase_view.dart';
 import 'package:kauje_mobile/app/theme/app_colors.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 import 'package:kauje_mobile/app/widgets/header.dart';
@@ -19,8 +20,8 @@ class HomeView extends GetView<HomeController> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.accent,
-            Theme.of(context).colorScheme.surfaceContainerHighest,
+            context.colorScheme.accent,
+            context.colorScheme.surfaceContainerHighest,
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -91,9 +92,7 @@ class HomeView extends GetView<HomeController> {
           ],
         ),
       ),
-      // // STACK
     );
-    // STACK
   }
 
   Widget _buildUserProfile(BuildContext context) {
@@ -200,7 +199,9 @@ class HomeView extends GetView<HomeController> {
           icon: AppIcons.etalaseIcon,
           text: 'Etalase',
           backgroundColor: AppColors.softRed,
-          onTap: () {},
+          onTap: () {
+            Get.to(() => ShowcaseView(), transition: Transition.topLevel);
+          },
         ),
         MenuItem(
           icon: AppIcons.alumniIcon,

@@ -26,19 +26,22 @@ class MenuItem extends StatelessWidget {
     return colorScheme.onSurface;
   }
 
+  Color _darkenColor(Color color, double amount) {
+    final hsl = HSLColor.fromColor(color);
+    final lightness = (hsl.lightness - amount).clamp(0.0, 1.0);
+    return hsl.withLightness(lightness).toColor();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
+    return Material(
+      color: backgroundColor,
       borderRadius: BorderRadius.circular(8),
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        splashColor: _darkenColor(backgroundColor, 0.1),
+        highlightColor: _darkenColor(backgroundColor, 0.1),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
