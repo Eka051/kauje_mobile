@@ -41,7 +41,7 @@ class _IdCardState extends State<IdCard> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSize(
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 600),
       curve: Curves.easeOutBack,
       child: Padding(
         padding: EdgeInsets.only(bottom: showIdCard ? 16.0 : 24.0),
@@ -75,6 +75,7 @@ class _IdCardState extends State<IdCard> {
       ),
       padding: const EdgeInsets.all(12.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: 60,
@@ -96,9 +97,9 @@ class _IdCardState extends State<IdCard> {
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Expanded(
-            flex: 3,
+            flex: 5,
             child: RichText(
               text: TextSpan(
                 text: '${widget.name}\n',
@@ -112,23 +113,21 @@ class _IdCardState extends State<IdCard> {
               ),
             ),
           ),
-          const Spacer(),
           Expanded(
             flex: 4,
             child: InkWell(
               onTap: _toggleIdCard,
               borderRadius: BorderRadius.circular(8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
+                children: [
                   Flexible(
                     child: Text(
                       'Ketuk Untuk Melihat ID-Card',
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  // SizedBox(width: 4),
                   Icon(Icons.arrow_upward),
                 ],
               ),

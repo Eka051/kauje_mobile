@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
-import 'package:kauje_mobile/app/theme/app_theme.dart';
 import '../controllers/auth_controller.dart';
 import 'widgets/splash/splash_widgets.dart';
 import 'widgets/auth_sheet/full_sheet.dart';

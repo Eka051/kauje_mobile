@@ -45,66 +45,71 @@ class ProfileView extends GetView<ProfileController> {
                       constraints: BoxConstraints(
                         minHeight: constraints.maxHeight,
                       ),
-                      child: IntrinsicHeight(
-                        child: Stack(
-                          children: [
-                            Transform.translate(
-                              offset: Offset(0, -40),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16.0,
-                                  right: 16.0,
-                                ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                        child: Transform.translate(
+                          offset: Offset(0, -40),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Header(),
+                              Transform.translate(
+                                offset: Offset(0, -40),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Header(),
-                                    Transform.translate(
-                                      offset: Offset(0, -40),
-                                      child: Column(
-                                        children: [
-                                          IdCard(
-                                            profileImage:
-                                                'assets/images/profil.png',
-                                            name: 'Ahimsa Jenar',
-                                            nim: '232410101090',
-                                            faculty: 'Fakultas Ilmu Komputer',
-                                            major: 'Sistem Informasi',
-                                          ),
-                                          ProfileData(
-                                            nameController:
-                                                controller.nameController,
-                                            nimController:
-                                                controller.nimController,
-                                            dateController:
-                                                controller.dateController,
-                                            emailController:
-                                                controller.emailController,
-                                            phoneController:
-                                                controller.phoneController,
-                                            instituteController:
-                                                controller.instituteController,
-                                            facultyController:
-                                                controller.facultyController,
-                                            pickCvFile: () {},
-                                            cvFileName:
-                                                controller.profilePicture.value,
-                                            clearCvFile: () {},
-                                          ),
-                                          const SizedBox(height: 24),
-                                          AppFilledButton(
-                                            text: 'Keluar',
-                                            onPressed: controller.logout,
-                                          ),
-                                        ],
+                                    IdCard(
+                                      profileImage: 'assets/images/profil.png',
+                                      name: 'Ahimsa Jenar',
+                                      nim: '232410101090',
+                                      faculty: 'Fakultas Ilmu Komputer',
+                                      major: 'Sistem Informasi',
+                                    ),
+                                    Obx(
+                                      () => ProfileData(
+                                        profilePic:
+                                            controller.profilePicture.value,
+                                        avatarSize: 96,
+                                        nameController:
+                                            controller.nameController,
+                                        nimController: controller.nimController,
+                                        dateController:
+                                            controller.dateController,
+                                        emailController:
+                                            controller.emailController,
+                                        phoneController:
+                                            controller.phoneController,
+                                        instituteController:
+                                            controller.instituteController,
+                                        facultyController:
+                                            controller.facultyController,
+                                        cvFileName: controller.cvFileName.value,
+                                        pickCvFile: () {
+                                          controller.pickCvFile();
+                                        },
+                                        clearCvFile: () {
+                                          controller.clearCvFile();
+                                        },
+                                        isEditing: controller.isEditing.value,
+                                        onEditProfile: () =>
+                                            controller.editProfile(),
+                                        onLockProfile: () =>
+                                            controller.lockProfile(),
+                                        onSave: () => (),
+                                        onCancel: () => (),
                                       ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    AppFilledButton(
+                                      text: 'Keluar',
+                                      onPressed: controller.logout,
+                                      color: context.colorScheme.primary,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

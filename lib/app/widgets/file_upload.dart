@@ -8,6 +8,7 @@ class FileUpload extends StatelessWidget {
   final VoidCallback onPickFile;
   final VoidCallback? onClearFile;
   final String hintText;
+  final bool? isEditing;
 
   const FileUpload({
     super.key,
@@ -15,13 +16,14 @@ class FileUpload extends StatelessWidget {
     required this.onPickFile,
     this.onClearFile,
     this.hintText = 'Unggah Berkas',
+    this.isEditing,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(10),
-      onTap: onPickFile,
+      onTap: isEditing! ? onPickFile : null,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
@@ -51,7 +53,7 @@ class FileUpload extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            if (fileName.isNotEmpty && onClearFile != null)
+            if (fileName.isNotEmpty && onClearFile != null && isEditing == true)
               GestureDetector(
                 onTap: onClearFile,
                 child: Icon(

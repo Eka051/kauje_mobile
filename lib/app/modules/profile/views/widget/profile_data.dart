@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
+import 'package:kauje_mobile/app/widgets/app_filled_button.dart';
 import 'package:kauje_mobile/app/widgets/app_text_field.dart';
 import 'package:kauje_mobile/app/widgets/file_upload.dart';
 import 'package:kauje_mobile/app/widgets/label_text.dart';
@@ -21,6 +22,11 @@ class ProfileData extends StatelessWidget {
   final String cvFileName;
   final VoidCallback pickCvFile;
   final VoidCallback clearCvFile;
+  final bool isEditing;
+  final VoidCallback onEditProfile;
+  final VoidCallback onLockProfile;
+  final VoidCallback onSave;
+  final VoidCallback onCancel;
 
   const ProfileData({
     super.key,
@@ -37,6 +43,11 @@ class ProfileData extends StatelessWidget {
     required this.cvFileName,
     required this.pickCvFile,
     required this.clearCvFile,
+    required this.isEditing,
+    required this.onEditProfile,
+    required this.onLockProfile,
+    required this.onSave,
+    required this.onCancel,
   });
 
   @override
@@ -85,45 +96,62 @@ class ProfileData extends StatelessWidget {
                 ),
               ),
               Row(
+                spacing: 8,
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: SvgPicture.asset(
-                          AppIcons.edit,
-                          colorFilter: ColorFilter.mode(
-                            context.colorScheme.red,
-                            BlendMode.srcIn,
+                  // edit
+                  Material(
+                    color: context.colorScheme.softRed,
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: InkWell(
+                      onTap: onEditProfile,
+                      child: Container(
+                        height: 32,
+                        width: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SvgPicture.asset(
+                            AppIcons.edit,
+                            colorFilter: ColorFilter.mode(
+                              context.colorScheme.red,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(4.0),
-                        color: context.colorScheme.lightBlue,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: SvgPicture.asset(
-                          AppIcons.lock,
-                          colorFilter: ColorFilter.mode(
-                            context.colorScheme.blue,
-                            BlendMode.srcIn,
+                  // lock
+                  Material(
+                    color: context.colorScheme.softBlue,
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: InkWell(
+                      onTap: onLockProfile,
+                      borderRadius: BorderRadius.circular(4.0),
+                      splashColor: HSLColor.fromColor(
+                        context.colorScheme.blue.withAlpha(30),
+                      ).withLightness(0.3).toColor(),
+                      highlightColor: HSLColor.fromColor(
+                        context.colorScheme.blue.withAlpha(30),
+                      ).withLightness(0.5).toColor(),
+                      child: Container(
+                        height: 32,
+                        width: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SvgPicture.asset(
+                            AppIcons.lock,
+                            colorFilter: ColorFilter.mode(
+                              context.colorScheme.blue,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ),
@@ -144,17 +172,26 @@ class ProfileData extends StatelessWidget {
           const SizedBox(height: 12),
           LabelText(text: 'Nama Lengkap', fontSize: 14),
           const SizedBox(height: 8),
-          AppTextField(controller: nameController, hintText: 'Ahimsa Jenar'),
+          AppTextField(
+            controller: nameController,
+            hintText: 'Ahimsa Jenar',
+            enabled: isEditing,
+          ),
           const SizedBox(height: 12),
           LabelText(text: 'NIM/NIK', fontSize: 14),
           const SizedBox(height: 8),
-          AppTextField(controller: nimController, hintText: '232410101090'),
+          AppTextField(
+            controller: nimController,
+            hintText: '232410101090',
+            enabled: isEditing,
+          ),
           const SizedBox(height: 12),
           LabelText(text: 'Tempat/Tanggal Lahir', fontSize: 14),
           const SizedBox(height: 8),
           AppTextField(
             controller: dateController,
             hintText: 'Jember, 03 Desember 2004',
+            enabled: isEditing,
           ),
           const SizedBox(height: 12),
           LabelText(text: 'Email', fontSize: 14),
@@ -162,21 +199,31 @@ class ProfileData extends StatelessWidget {
           AppTextField(
             controller: emailController,
             hintText: 'ahimsa.jenar@example.com',
+            enabled: isEditing,
           ),
           const SizedBox(height: 12),
           LabelText(text: 'No. Telepon', fontSize: 14),
           const SizedBox(height: 8),
-          AppTextField(controller: phoneController, hintText: '081234567890'),
+          AppTextField(
+            controller: phoneController,
+            hintText: '081234567890',
+            enabled: isEditing,
+          ),
           const SizedBox(height: 12),
           LabelText(text: 'Instansi', fontSize: 14),
           const SizedBox(height: 8),
-          AppTextField(controller: instituteController, hintText: '-'),
+          AppTextField(
+            controller: instituteController,
+            hintText: '-',
+            enabled: isEditing,
+          ),
           const SizedBox(height: 12),
           LabelText(text: 'Fakultas', fontSize: 14),
           const SizedBox(height: 8),
           AppTextField(
             controller: facultyController,
             hintText: 'Fakultas Ilmu Komputer',
+            enabled: isEditing,
           ),
           const SizedBox(height: 12),
           LabelText(text: 'CV', fontSize: 14),
@@ -186,49 +233,41 @@ class ProfileData extends StatelessWidget {
             onPickFile: pickCvFile,
             onClearFile: clearCvFile,
             hintText: 'Unggah berkas',
+            isEditing: isEditing,
           ),
-          // InkWell(
-          //   borderRadius: BorderRadius.circular(10),
-          //   onTap: pickCvFile,
-          //   child: Container(
-          //     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          //     decoration: BoxDecoration(
-          //       color: context.colorScheme.surface,
-          //       borderRadius: BorderRadius.circular(10),
-          //       border: Border.all(
-          //         color: context.colorScheme.borderPrimary,
-          //         width: 1.5,
-          //       ),
-          //     ),
-          //     child: Row(
-          //       children: [
-          //         Icon(
-          //           Icons.file_upload_outlined,
-          //           color: context.colorScheme.textSecondary,
-          //           size: 20,
-          //         ),
-          //         const SizedBox(width: 12),
-          //         Expanded(
-          //           child: Text(
-          //             cvFileName.isNotEmpty ? cvFileName : 'Unggah berkas',
-          //             style: AppThemeExtension(context).textTheme.bodyMedium!
-          //                 .copyWith(color: context.colorScheme.textSecondary),
-          //             overflow: TextOverflow.ellipsis,
-          //           ),
-          //         ),
-          //         if (cvFileName.isNotEmpty)
-          //           GestureDetector(
-          //             onTap: clearCvFile,
-          //             child: Icon(
-          //               Icons.close,
-          //               color: context.colorScheme.textSecondary,
-          //               size: 20,
-          //             ),
-          //           ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (isEditing)
+                Expanded(
+                  child: AppFilledButton(
+                    text: 'Batal',
+                    textColor: context.colorScheme.onSurface,
+                    onPressed: onCancel,
+                    color: context.colorScheme.surface,
+                    height: 32,
+                    prefixIcon: SvgPicture.asset(AppIcons.close, height: 20),
+                    borderRadius: 8,
+                    borderSide: BorderSide(
+                      color: context.colorScheme.borderPrimary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              if (isEditing) const SizedBox(width: 12),
+              if (isEditing)
+                Expanded(
+                  child: AppFilledButton(
+                    text: 'Simpan',
+                    textColor: context.colorScheme.onSurface,
+                    onPressed: onSave,
+                    height: 32,
+                    prefixIcon: SvgPicture.asset(AppIcons.save, height: 20),
+                    borderRadius: 8,
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );

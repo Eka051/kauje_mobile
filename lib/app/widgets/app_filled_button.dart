@@ -37,33 +37,49 @@ class AppFilledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = onPressed == null;
+    final Color buttonColor = color ?? context.colorScheme.primary;
 
     return SizedBox(
       width: width ?? double.infinity,
       height: height ?? 52,
       child: FilledButton(
         onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          side:
-              borderSide ??
-              BorderSide(
-                color: color != null
-                    ? context.colorScheme.accent
-                    : context.colorScheme.borderPrimary,
-                width: 1,
+        style:
+            FilledButton.styleFrom(
+              side: borderSide,
+              backgroundColor: buttonColor,
+              foregroundColor: iconColor ?? Colors.white,
+              disabledForegroundColor:
+                  disabledForegroundColor ??
+                  context.colorScheme.textOnSecondary,
+              disabledBackgroundColor:
+                  disabledBackgroundColor ??
+                  (color != null ? color! : context.colorScheme.borderPrimary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  borderRadius?.toDouble() ?? 10,
+                ),
               ),
-          backgroundColor: color ?? context.colorScheme.primary,
-          disabledForegroundColor:
-              disabledForegroundColor ?? context.colorScheme.textOnSecondary,
-          disabledBackgroundColor:
-              disabledBackgroundColor ??
-              (color != null ? color! : context.colorScheme.borderPrimary),
-
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius?.toDouble() ?? 10),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-        ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ).copyWith(
+              overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return HSLColor.fromColor(buttonColor)
+                      .withLightness(
+                        HSLColor.fromColor(buttonColor).lightness * 0.8,
+                      )
+                      .toColor();
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return HSLColor.fromColor(buttonColor)
+                      .withLightness(
+                        HSLColor.fromColor(buttonColor).lightness * 0.8,
+                      )
+                      .toColor();
+                }
+                return null;
+              }),
+            ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
