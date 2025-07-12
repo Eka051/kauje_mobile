@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:kauje_mobile/app/constants/app_const.dart';
-import 'package:kauje_mobile/app/modules/home/views/widgets/category_tab.dart';
+import 'package:kauje_mobile/app/modules/alumni/views/alumni_view.dart';
+import 'package:kauje_mobile/app/widgets/category_tab.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/menu_item.dart';
 import 'package:kauje_mobile/app/modules/home/views/widgets/news_card_animation.dart';
 import 'package:kauje_mobile/app/modules/showcase/views/showcase_view.dart';
@@ -200,14 +201,16 @@ class HomeView extends GetView<HomeController> {
           text: 'Etalase',
           backgroundColor: AppColors.softRed,
           onTap: () {
-            Get.to(() => ShowcaseView(), transition: Transition.topLevel);
+            Get.to(() => ShowcaseView(), transition: Transition.noTransition);
           },
         ),
         MenuItem(
           icon: AppIcons.alumniIcon,
           text: 'Alumni',
           backgroundColor: AppColors.softBlue,
-          onTap: () {},
+          onTap: () {
+            Get.to(() => AlumniView(), transition: Transition.noTransition);
+          },
         ),
         MenuItem(
           icon: AppIcons.lowonganIcon,

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
 class AppImages {
   static const String bgSplashscreen = 'assets/images/bg-splashscreen.png';
   static const String bgGradient = 'assets/images/bg-gradient.png';
@@ -41,4 +44,5 @@ class AppTabIcon {
   static const String berita = 'assets/icons/berita-tab.svg';
   static const String etalase = 'assets/icons/etalase-tab.svg';
   static const String lowongan = 'assets/icons/lowongan-tab.svg';
+  static const String filter = 'assets/icons/filter-tab.svg';
 }

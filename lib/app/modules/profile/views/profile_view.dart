@@ -4,6 +4,7 @@ import 'package:kauje_mobile/app/constants/app_const.dart';
 import 'package:kauje_mobile/app/modules/profile/views/widget/id_card.dart';
 import 'package:kauje_mobile/app/modules/profile/views/widget/profile_data.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
+import 'package:kauje_mobile/app/widgets/app_filled_button.dart';
 import 'package:kauje_mobile/app/widgets/app_outlined_button.dart';
 import 'package:kauje_mobile/app/widgets/header.dart';
 

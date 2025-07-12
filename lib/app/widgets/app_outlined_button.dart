@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kauje_mobile/app/theme/app_theme.dart';
 
-class AppFilledButton extends StatelessWidget {
+class AppOutlinedButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final double width;
@@ -9,7 +9,7 @@ class AppFilledButton extends StatelessWidget {
   final double fontSize;
   final Color? color;
 
-  const AppFilledButton({
+  const AppOutlinedButton({
     super.key,
     required this.text,
     required this.onPressed,

@@ -6,7 +6,7 @@ import 'app/routes/app_pages.dart';
 void main() {
   runApp(
     GetMaterialApp(
-      title: "Application",
+      title: "Kauje Mobile",
       theme: AppTheme.light,
       initialRoute: AppPages.initial,
       getPages: AppPages.routes,
